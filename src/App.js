@@ -1,16 +1,18 @@
 import './App.css';
-import { db } from './firebase.js';
-import Header from './Header.js'
-import { useEffect, useState } from 'react';
+import Header from './Header'
+import Login from './Login'
+import Cadastro from './Cadastro'
+import { useState } from 'react'
 
 function App() {
   const [user, setUser] = useState();
-  useEffect(() => {
-
-  }, []);
 
   return (
-    <Header setUser={setUser} user={user}></Header>
+    <div className="App">
+      <Header></Header>
+      {(!user) && <Login user={user} setUser={setUser} ></Login>}
+      {(!user) && <Cadastro user={user} setUser={setUser} ></Cadastro>}
+    </div>
   );
 }
 

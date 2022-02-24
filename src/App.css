@@ -8,87 +8,20 @@ body {
   background-color: rgb(220, 220, 220);
 }
 
-.center {
-  display: flex;
-  margin: 0 auto;
-  max-width: 1200px;
-  padding: 0 2%;
-}
-
-.header {
-  padding: 15px 0;
+.headerLogo {
+  padding: 15px 0 0 15px;
   background-color: white;
-  border-bottom: 2px solid rgb(230, 230, 230);
 }
 
-.header__logo {
-  width: 50%;
-}
-
-.header__loginForm {
-  width: 50%;
-  text-align: right;
-}
-
-.header__loginForm form {
-  display: inline-block;
-}
-
-.header__loginForm input[type=text],
-.header__loginForm input[type=password] {
-  font-size: 14px;
-  width: 180px;
-  margin-right: 5px;
-  height: 20px;
-  border: 1px solid #ccc;
-  padding-left: 10px;
-}
-
-.header__loginForm input[type=submit] {
-  background-color: #0095f6;
-  color: white;
-  border: 0;
-  height: 20px;
+.headerLogoImg {
+  background-image: url(img/735145cfe0a4.png);
+  background-repeat: no-repeat;
+  height: 42px;
+  width: 125px;
   cursor: pointer;
-  font-size: 14px;
-  padding: 0px 10px;
 }
 
-.btn__criarConta {
-  display: inline-block;
-}
-
-.btn__criarConta a {
-  font-size: 14px;
-  margin: 0 10px;
-}
-
-.header__logadoInfo {
-  text-align: right;
-  width: 50%;
-}
-
-.header__logadoInfo a {
-  margin: 0 10px;
-  background-color: #0095f6;
-  color: white;
-  text-decoration: none;
-  padding: 3px 10px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.modalCriarConta {
-  display: none;
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.formCriarConta {
+.formLogin {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -96,34 +29,96 @@ body {
   background-color: white;
   padding: 20px;
   width: 80%;
-  max-width: 700px;
+  max-width: 300px;
   text-align: center;
 }
 
-.formCriarConta input {
+.logo {
+  background-image: url(img/32f0a4f27407.png);
+  background-position: 0 -130px;
+  height: 51px;
+  width: 175px;
+  margin: 22px auto 22px;
+}
+
+.formLogin input[type=email],
+.formLogin input[type=password] {
   width: 100%;
   height: 30px;
   margin-bottom: 10px;
   padding-left: 10px;
   border: 1px solid #ccc;
+  border-radius: 3px;
 }
 
-.formCriarConta input[type=submit] {
+.formLogin input[type=submit],
+.formLogin button {
   background-color: #0095f6;
-  cursor: pointer;
   color: white;
-}
-
-.closeModalCriar {
-  position: absolute;
-  right: -10px;
-  top: -10px;
-  text-align: center;
-  color: white;
-  line-height: 30px;
-  cursor: pointer;
-  width: 30px;
+  border: 0;
   height: 30px;
-  border-radius: 15px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.validacao {
+  font-size: 12px;
+  color: red;
+  font-weight: bold;
+}
+
+.formCadastro {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  width: 80%;
+  max-width: 300px;
+  text-align: center;
+}
+
+.formCadastro h2 {
+  color: rgb(142, 142, 142);
+  font-size: 17px;
+  padding-bottom: 15px;
+}
+
+.formCadastro input {
+  width: 100%;
+  height: 30px;
+  margin-bottom: 10px;
+  padding-left: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.formCadastro input[type=submit],
+.formCadastro button {
+  width: 100%;
+  height: 30px;
+  margin-bottom: 10px;
+  padding-left: 0;
   background-color: #0095f6;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+}
+
+.formCadastro input[type=submit]:disabled {
+  color: white;
+  background-color: rgba(0, 149, 246, 0.3);
+  border-color: rgba(0, 0, 0, 0);
+}
+
+.regrasCadastro {
+  font-size: 12px;
+  color: rgb(142, 142, 142);
+  text-align: center;
 }
