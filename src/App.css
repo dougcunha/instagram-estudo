@@ -8,9 +8,37 @@ body {
   background-color: rgb(220, 220, 220);
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+}
+
+.logado {
+  padding: 15px 0 0 15px;
+  padding-right: 15px;
+}
+
+.logoff{
+  color: #0095f6;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+button.novo-post {
+  color: white;
+  background-color: #0095f6;
+  border: 0;
+  height: 30px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 10px;
+  padding: 5px;
+  border-radius: 4px;
+}
+
 .headerLogo {
   padding: 15px 0 0 15px;
-  background-color: white;
 }
 
 .headerLogoImg {
@@ -89,7 +117,8 @@ body {
   padding-bottom: 15px;
 }
 
-.formCadastro input {
+.formCadastro input,
+.formUpload input {
   width: 100%;
   height: 30px;
   margin-bottom: 10px;
@@ -99,7 +128,8 @@ body {
 }
 
 .formCadastro input[type=submit],
-.formCadastro button {
+.formCadastro button,
+.formUpload input[type=submit] {
   width: 100%;
   height: 30px;
   margin-bottom: 10px;
@@ -121,4 +151,40 @@ body {
   font-size: 12px;
   color: rgb(142, 142, 142);
   text-align: center;
+}
+
+.modalUpload {
+  display: block;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.formUpload {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  width: 80%;
+  max-width: 700px;
+  text-align: center;
+}
+
+.fechar {
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  text-align: center;
+  color: white;
+  line-height: 30px;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  background-color: #0095f6;
 }
