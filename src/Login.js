@@ -31,9 +31,7 @@ function Login(props) {
         <input id="emailLogin" onChange={(e) => validarEmail(e, setEmailError)} type="email" placeholder='Email' />
         <input id="senhaLogin" type="password" placeholder='Senha' />
         <input type="submit" name="acao" value="Entrar" />
-        <div className='btnCriarConta'>
-          <button onClick={e => mostrarCadastro(e) } href="#">Criar conta</button>
-        </div>
+        <button className='btnCriarConta' onClick={e => mostrarCadastro(e) } href="#">Criar conta</button>
       </form>
     </div>
   )

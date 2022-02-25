@@ -6,7 +6,7 @@ import { FormUpload } from './FormUpload';
 import { useState } from 'react'
 
 function App() {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState('Douglas');
   const [conteudo, setConteudo] = useState();
 
   return (
@@ -15,7 +15,7 @@ function App() {
       {(!user) && <Login user={user} setUser={setUser} ></Login>}
       {(!user) && <Cadastro user={user} setUser={setUser} ></Cadastro>}
       <div className="conteudo" id="conteudo">
-        <FormUpload conteudo={conteudo} setConteudo={setConteudo}></FormUpload>
+        <FormUpload user={user} conteudo={conteudo} setConteudo={setConteudo}></FormUpload>
       </div>
     </div>
   );

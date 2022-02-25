@@ -19,13 +19,8 @@ body {
   padding-right: 15px;
 }
 
-.logoff{
-  color: #0095f6;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-button.novo-post {
+button.novo-post,
+.logoff {
   color: white;
   background-color: #0095f6;
   border: 0;
@@ -50,6 +45,7 @@ button.novo-post {
 }
 
 .formLogin {
+  border-radius: 4px;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -99,6 +95,7 @@ button.novo-post {
 }
 
 .formCadastro {
+  border-radius: 4px;
   display: none;
   position: absolute;
   left: 50%;
@@ -118,7 +115,8 @@ button.novo-post {
 }
 
 .formCadastro input,
-.formUpload input {
+.formUpload input,
+.formUpload textarea {
   width: 100%;
   height: 30px;
   margin-bottom: 10px;
@@ -164,6 +162,7 @@ button.novo-post {
 }
 
 .formUpload {
+  border-radius: 4px;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -187,4 +186,110 @@ button.novo-post {
   height: 30px;
   border-radius: 15px;
   background-color: #0095f6;
+}
+
+.formUpload textarea  {
+  padding-top: 5px;
+  height: 200px;
+  outline: none;
+  resize: none;
+}
+
+.formUpload h2 {
+  color: rgb(142, 142, 142);
+  font-size: 22px;
+  padding-bottom: 15px;
+}
+
+.progresso {
+  display: none;
+}
+
+.upload-box-uploading,
+.upload-box-success,
+.upload-box-error {
+  display: none;
+}
+
+.upload-box {
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-size: 1.25rem; /* 20 */
+  background-color: #f7f7f7;
+  position: relative;
+  padding: 100px 20px;
+  outline: 1px dashed #0095f6;
+  transition: outline-offset .15s ease-in-out, background-color .15s linear;
+}
+
+#file {
+  line-height: normal;
+  display: inline-block;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+  appearance: none;
+  background-color: initial;
+  cursor: default;
+  align-items: baseline;
+  text-overflow: ellipsis;
+  white-space: pre;
+  text-align: start !important;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+div.upload-box-input label {
+  cursor: pointer;
+}
+
+.upload-box-button {
+  font-weight: 700;
+  color: #0095f6;
+  border: none;
+  display: none;
+  padding: 8px 16px;
+  margin: 40px auto 0;
+  cursor: pointer;
+  text-transform: none;
+  overflow: visible;
+}
+
+.upload-box-icon {
+  width: 100%;
+  height: 80px;
+  fill: #0095f6;
+  display: block;
+  margin-bottom: 40px;
+}
+
+svg:not(:root) {
+  overflow: hidden;
+}
+
+svg {
+  vertical-align: middle;
+  pointer-events: none;
+}
+
+.upload-box-preview img {
+  max-width: 500px;
+  max-height: 500px;
+  cursor: pointer;
+}
+
+.preview {
+  padding: 0;
+}
+
+.oculto {
+  display: none;
+}
+
+.visivel {
+  display: block;
 }
