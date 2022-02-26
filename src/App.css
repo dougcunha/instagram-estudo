@@ -20,7 +20,7 @@ body {
 }
 
 button.novo-post,
-.logoff {
+button.logoff {
   color: white;
   background-color: #0095f6;
   border: 0;
@@ -114,9 +114,7 @@ button.novo-post,
   padding-bottom: 15px;
 }
 
-.formCadastro input,
-.formUpload input,
-.formUpload textarea {
+.formCadastro input {
   width: 100%;
   height: 30px;
   margin-bottom: 10px;
@@ -126,8 +124,7 @@ button.novo-post,
 }
 
 .formCadastro input[type=submit],
-.formCadastro button,
-.formUpload input[type=submit] {
+.formCadastro button {
   width: 100%;
   height: 30px;
   margin-bottom: 10px;
@@ -189,7 +186,12 @@ button.novo-post,
 }
 
 .formUpload textarea  {
+  width: 100%;
+  margin-bottom: 10px;
+  padding-left: 10px;
   padding-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
   height: 200px;
   outline: none;
   resize: none;
@@ -199,6 +201,30 @@ button.novo-post,
   color: rgb(142, 142, 142);
   font-size: 22px;
   padding-bottom: 15px;
+}
+
+.formUpload input {
+  font-size: 16px;
+  font-weight: 700;
+  width: 100%;
+  height: 30px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding-left: 0;
+  background-color: #0095f6;
+  cursor: pointer;
+  color: white;
+}
+
+.formUpload input[type=submit]:disabled {
+  color: white;
+  background-color: rgba(0, 149, 246, 0.3);
+  border-color: rgba(0, 0, 0, 0);
+}
+
+.upload-box-file:hover + label strong {
+  color: #0095f6;
 }
 
 .progresso {
@@ -247,18 +273,6 @@ div.upload-box-input label {
   cursor: pointer;
 }
 
-.upload-box-button {
-  font-weight: 700;
-  color: #0095f6;
-  border: none;
-  display: none;
-  padding: 8px 16px;
-  margin: 40px auto 0;
-  cursor: pointer;
-  text-transform: none;
-  overflow: visible;
-}
-
 .upload-box-icon {
   width: 100%;
   height: 80px;
@@ -288,8 +302,4 @@ svg {
 
 .oculto {
   display: none;
-}
-
-.visivel {
-  display: block;
 }

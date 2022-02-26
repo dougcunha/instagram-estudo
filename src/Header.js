@@ -16,7 +16,7 @@ function Logado(props) {
   return (
     <span className='logado'>
       Bem vindo <strong>{props.user}!</strong>
-      <span className='logoff' onClick={e => sair(e)}> Sair </span>
+      <button className='logoff' onClick={e => sair(e)}> Sair </button>
       <button className='novo-post' onClick={e => abrirNovoPost(e)}>Publicar</button>
     </span>
   )

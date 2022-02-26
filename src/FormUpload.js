@@ -18,6 +18,7 @@ export function FormUpload(props) {
 
     taskEnviar.on("stage_changed", snap => {
         const progress = Math.round(snap.bytesTransferred / snap.totalBytes) * 100;
+        console.log(`progresso: ${progress}`)
         setProgress(progress);
     }, err => alert(err.message),
     done => {
@@ -57,7 +58,7 @@ export function FormUpload(props) {
           <form id="form-upload" onSubmit={e => enviarPost(e)}>
               <UploadBox {...props} setFile={setFile}></UploadBox>
               <textarea id="descricao-post" type="text" placeholder="Descrição"/>
-              <input type="submit" value="Publicar" />
+              <input type="submit" value="Publicar" disabled={file ? false : true}/>
           </form>
         </div>
       </div>
@@ -98,21 +99,20 @@ function UploadBox(props) {
   }
 
   return (
-    <form class="upload-box" id="upload-box">
+    <div className="upload-box" id="upload-box">
       <div className="upload-box-preview">
         <img id="upload-box-preview-img" src="#" alt="" onClick={e => selecionarArquivo(e)} />
       </div>
       <div className="upload-box-input">
-        <svg class="upload-box-icon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43">
+        <svg className="upload-box-icon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43">
           <path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z" />
         </svg>
         <input type="file" onChange={e => showFiles(e)} className="upload-box-file" id="file" />
-        <label for="file"><strong>Escolha uma imagem</strong> ou arraste aqui.</label>
-        <button className="upload-box-button" type="submit">Upload</button>
+        <label htmlFor="file"><strong>Escolha uma imagem</strong> ou arraste aqui.</label>
       </div>
       <div className="upload-box-uploading">Enviando...</div>
       <div className="upload-box-success">Pronto!</div>
       <div className="upload-box-error">Erro!</div>
-    </form>
+    </div>
   )
 }
