@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from 'react'
 import { storage, db } from './firebase';
 import firebase from 'firebase/compat/app';
 
 export function FormUpload(props) {
   const [progress, setProgress] = useState(0);
   const [file, setFile] = useState(null);
+
+  useEffect(() => {
+
+  }, []);
 
   function enviarPost(e) {
     e.preventDefault();
@@ -38,19 +42,17 @@ export function FormUpload(props) {
 
         setProgress(0);
         setFile(null);
-        alert('Post publicado!');
         fechar(e);
     });
   }
 
   function fechar(e) {
     e.preventDefault();
-    props.setConteudo(false);
+    props.setNovoPost(false);
   }
 
-  return props.conteudo
-    ? (
-      <div className="modalUpload">
+  return  (
+      <div className="modalUpload" style={{display: props.novoPost ? 'block' : 'none'}}>
         <div className="formUpload">
           <progress className="oculto" id="progress-upload" value={progress}></progress>
           <span className="fechar" onClick={e => fechar(e)}>X</span>
@@ -62,8 +64,7 @@ export function FormUpload(props) {
           </form>
         </div>
       </div>
-    )
-    : null
+  )
 }
 
 function UploadBox(props) {

@@ -10,7 +10,7 @@ function Logado(props) {
   function abrirNovoPost(e) {
     e.preventDefault();
 
-    props.setConteudo(true);
+    props.setNovoPost(true);
   }
 
   return (

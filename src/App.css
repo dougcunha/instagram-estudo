@@ -72,7 +72,7 @@ button.logoff {
   margin-bottom: 10px;
   padding-left: 10px;
   border: 1px solid #ccc;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .formLogin input[type=submit],
@@ -120,7 +120,7 @@ button.logoff {
   margin-bottom: 10px;
   padding-left: 10px;
   border: 1px solid #ccc;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .formCadastro input[type=submit],
@@ -191,7 +191,7 @@ button.logoff {
   padding-left: 10px;
   padding-top: 5px;
   border: 1px solid #ccc;
-  border-radius: 3px;
+  border-radius: 4px;
   height: 200px;
   outline: none;
   resize: none;
@@ -210,7 +210,7 @@ button.logoff {
   height: 30px;
   margin-bottom: 10px;
   border: 1px solid #ccc;
-  border-radius: 3px;
+  border-radius: 4px;
   padding-left: 0;
   background-color: #0095f6;
   cursor: pointer;
@@ -302,4 +302,115 @@ svg {
 
 .oculto {
   display: none;
+}
+
+.publicacao {
+  background-color: white;
+  max-width: 700px;
+  margin: 10px auto;
+  border-radius: 4px;
+}
+
+.publicacao > img {
+  width: 100%;
+  object-fit: contain;
+  max-height: 500px;
+}
+
+.publicacao > p {
+  padding: 10px;
+}
+
+.publicacao form {
+  padding: 20px;
+}
+
+.publicacao textarea {
+  width: 100%;
+  height: 120px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  resize: none;
+}
+
+.publicacao input[type=submit] {
+  background-color: #0095f6;
+  cursor: pointer;
+  color: white;
+  border: 0;
+  padding: 8px 10px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.btn-excluir-post {
+  width: 60px;
+  height: 30px;
+  margin-left: 10px;
+  margin-right: 10px;
+  padding-left: 0;
+  font-weight: 700;
+  float: right;
+  background-color: #0095f6;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+}
+
+.modal {
+  display: block;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.confirm-dlg {
+  border-radius: 4px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 10px;
+  width: 80%;
+  height: 100px;
+  max-width: 500px;
+}
+
+div.dialog p {
+  font-size: 16px;
+  font-weight: 700;
+  text-align: left;
+}
+
+div.dialog button {
+  width: 60px;
+  height: 30px;
+  font-weight: 700;
+  float: right;
+  background-color: #0095f6;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+}
+
+div.dialog button.sim {
+  background-color: #e23642
+}
+
+div.dialog button.nao {
+  margin-left: 8px;
+  background-color: #0095f6;
+}
+
+.dlg-botoes {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 10px;
 }
