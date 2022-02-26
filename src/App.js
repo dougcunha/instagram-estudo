@@ -16,9 +16,11 @@ function App() {
     db.collection('posts')
       .orderBy('timestamp', 'desc')
       .onSnapshot(snap => {
-        setPosts(snap.docs.map(p => {
+        const docs = snap.docs;
+        setPosts(docs.map(p => {
           return {id: p.id, info: p.data()}
-        }))
+        }));
+        setNovoPost(docs.length === 0);
       })
   }, []);
 
@@ -27,10 +29,8 @@ function App() {
       <Header user={user} setUser={setUser} setNovoPost={setNovoPost}></Header>
       {(!user) && <Login user={user} setUser={setUser} ></Login>}
       {(!user) && <Cadastro user={user} setUser={setUser} ></Cadastro>}
-      <div className="conteudo" id="conteudo">
-        <FormUpload user={user} novoPost={novoPost} setNovoPost={setNovoPost}></FormUpload>
-        { posts.map(val => <Post key={val.id} post={val.info} id={val.id}></Post>) }
-      </div>
+      {novoPost && user && <FormUpload user={user} novoPost={novoPost} setNovoPost={setNovoPost}></FormUpload>}
+      { posts.map(val => <Post key={val.id} post={val.info} id={val.id}></Post>) }
     </div>
   );
 }

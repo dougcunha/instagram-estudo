@@ -2,7 +2,6 @@ import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { useState, useEffect } from 'react'
 import { ConfirmDlg } from './ConfirmDlg';
-import { doc, deleteDoc } from "firebase/firestore";
 import { storage, db } from './firebase';
 
 export function Post(props) {
@@ -15,12 +14,29 @@ export function Post(props) {
 
   }
 
+  function apagarArquivo(id) {
+    console.log('Apagando o arquivo ' + id);
+    return storage.ref('images').child(id).delete()
+      .then(console.log(`Arquivo ${id} apagado.`))
+  }
+
   function apagarPost(e, id) {
     e.preventDefault();
-    db.collection("post").doc(id).delete().then(snap => {
-      console.log('Apagando o post ' + id);
-      snap.docs[0].ref.delete();
-    });
+    const doc = db.collection("posts").doc(id);
+    console.log(JSON.stringify(doc.get()));
+    let imgId;
+
+    doc.get()
+      .then(snap => {
+        const doc = snap.data();
+        console.log(JSON.stringify(doc));
+        imgId = doc.image.id;
+      })
+      .then(_ => {
+        console.log('Apagando o post ' + id);
+        doc.delete()
+          .then(_ => apagarArquivo(imgId));
+      })
 
     setApagando(false);
   }
@@ -37,7 +53,7 @@ export function Post(props) {
 
   return (
     <div className="publicacao" id={id}>
-      <img src={post.image} alt=""/>
+      <img src={post.image.url} alt=""/>
       <p>Postado por: <strong>{post.userName}</strong> - {data}<button className='btn-excluir-post' onClick={e => confirmar(e)}>Excluir</button></p>
       <p>{post.descricao}</p>
       <form onSubmit={e => comentar(id, e)}>

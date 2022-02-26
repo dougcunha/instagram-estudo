@@ -10,51 +10,67 @@ export function FormUpload(props) {
 
   }, []);
 
+  function atualizarProgresso(snap) {
+    const progress = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+    console.log(`progresso: ${progress}`)
+    setProgress(progress);
+  }
+
+  function uuidv4() {
+    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
+  }
+
+  function enviarArquivo(file, onsuccess) {
+    const tipo = file.name.split('.').pop();
+    const id = `${uuidv4()}.${tipo}`;
+    return storage
+      .ref(`images/${id}`)
+      .put(file)
+      .on("stage_changed",
+        snap => atualizarProgresso(snap),
+        err => alert(err.message),
+        _ => onsuccess(id)
+      );
+  }
+
+  function salvarPost(imgId) {
+    const descricao = document.getElementById('descricao-post').value;
+    storage
+      .ref('images')
+      .child(imgId)
+      .getDownloadURL()
+      .then(url => {
+        db.collection('posts')
+          .add({
+            descricao: descricao,
+            image: { url: url, id: imgId },
+            userName: props.user,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          })
+      });
+
+    setProgress(0);
+    setFile(null);
+    fechar();
+  }
+
   function enviarPost(e) {
     e.preventDefault();
-    const descricao = document.getElementById('descricao-post').value;
-    const progressEl = document.getElementById('progress-upload');
-    progressEl.classList.remove('oculto');
 
-    const taskEnviar = storage
-      .ref(`images/${file.name}`)
-      .put(file);
-
-    taskEnviar.on("stage_changed", snap => {
-        const progress = Math.round(snap.bytesTransferred / snap.totalBytes) * 100;
-        console.log(`progresso: ${progress}`)
-        setProgress(progress);
-    }, err => alert(err.message),
-    done => {
-      storage
-        .ref('images')
-        .child(file.name)
-        .getDownloadURL()
-        .then(url => {
-          db.collection('posts')
-            .add({
-              descricao: descricao,
-              image: url,
-              userName: props.user,
-              timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            })
-        })
-
-        setProgress(0);
-        setFile(null);
-        fechar(e);
-    });
+    enviarArquivo(file, salvarPost);
   }
 
   function fechar(e) {
-    e.preventDefault();
+    e?.preventDefault();
     props.setNovoPost(false);
   }
 
   return  (
       <div className="modalUpload" style={{display: props.novoPost ? 'block' : 'none'}}>
         <div className="formUpload">
-          <progress className="oculto" id="progress-upload" value={progress}></progress>
+          <progress className={progress ? '' : 'oculto'} id="progress-upload" value={progress} max="100"/>
           <span className="fechar" onClick={e => fechar(e)}>X</span>
           <h2>Criar nova publicação</h2>
           <form id="form-upload" onSubmit={e => enviarPost(e)}>
