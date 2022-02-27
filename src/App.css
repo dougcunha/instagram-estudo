@@ -375,42 +375,71 @@ svg {
   top: 50%;
   transform: translate(-50%, -50%);
   background-color: white;
-  padding: 10px;
+  padding: 15px;
   width: 80%;
-  height: 100px;
+  height: 250px;
   max-width: 500px;
 }
 
-div.dialog p {
+div.dialog p.dlg-titulo {
   font-size: 16px;
   font-weight: 700;
   text-align: left;
 }
 
+div.dlg-msg {
+  font-size: 16px;
+  font-weight: 500;
+  color: #e23642;
+  background-color: #fbe9e7;
+  height: 140px;
+  width: 100%;
+  padding-top: 10px;
+  margin-top: 15px;
+}
+
+.dlg-msg > p {
+  margin-top: 10px;
+  margin-left: 62px;
+  text-align: left;
+}
+
+img.dlg-icone {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  position: absolute;
+  left: 0;
+  margin-left: 30px;
+  margin-top: 15px;
+}
+
 div.dialog button {
-  width: 60px;
+  width: auto;
   height: 30px;
   font-weight: 700;
-  float: right;
   background-color: #0095f6;
-  border: 1px solid #ccc;
+  border: 0;
   border-radius: 4px;
   cursor: pointer;
   color: white;
 }
 
 div.dialog button.sim {
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-left: 8px;
   background-color: #e23642
 }
 
 div.dialog button.nao {
-  margin-left: 8px;
-  background-color: #0095f6;
+  background-color: white;
+  color: #828282;
 }
 
 .dlg-botoes {
   position: absolute;
   bottom: 0;
   right: 0;
-  margin: 10px;
+  margin: 15px;
 }

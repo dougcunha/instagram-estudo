@@ -23,6 +23,7 @@ export function Post(props) {
   function apagarPost(e, id) {
     e.preventDefault();
     const doc = db.collection("posts").doc(id);
+    console.log('Apagando post ' + id);
     console.log(JSON.stringify(doc.get()));
     let imgId;
 
@@ -51,6 +52,16 @@ export function Post(props) {
     setApagando(true);
   }
 
+  const apagarDlg = {
+    msg: "Essa operação não pode ser desfeita, continuar?",
+    tipo: "alerta",
+    titulo: "Apagar a postagem",
+    simTxt: "Apagar",
+    naoTxt: "Cancelar",
+    sim: e => apagarPost(e, id),
+    nao: e => fecharDlg(e)
+  }
+
   return (
     <div className="publicacao" id={id}>
       <img src={post.image.url} alt=""/>
@@ -60,7 +71,7 @@ export function Post(props) {
         <textarea id={`comentario-post-${id}`} placeholder="Digite um comentário..." ></textarea>
         <input type="submit" value="Comentar" />
       </form>
-      <ConfirmDlg style={{display: apagando ? 'block' : 'none'}} msg="Apagar a postagem?" sim={e => apagarPost(e, id)} nao={e => fecharDlg(e)} />
+      <ConfirmDlg style={{display: apagando ? 'block' : 'none'}} {...apagarDlg} />
     </div>
   )
 }
