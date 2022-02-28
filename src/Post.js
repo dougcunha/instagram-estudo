@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import { storage, db } from './firebase';
+import { storage, db, auth } from './firebase';
 import { DlgApagar } from './ConfirmDlg';
 import { Comentario } from './Comentario';
 import { CommentModel, UserModel } from './modelos';
+import './index';
 
 export function Post(props) {
   const post = props.post;
@@ -49,7 +50,6 @@ export function Post(props) {
     e.preventDefault();
     const doc = db.collection("posts").doc(id);
     console.log('Apagando post ' + id);
-    console.log(JSON.stringify(doc.get()));
     let imgId;
 
     doc.get()
@@ -85,7 +85,18 @@ export function Post(props) {
     style: {display: 'block'}
   }
 
-  const hidden = false; //auth.currentUser?.uid != us
+  function mostrarComentario(e) {
+    const form = document.getElementById(`comentario-form-${post.id}`);
+
+    if (form.classList.contains('hidden'))
+      form.classList.remove('hidden');
+    else
+      form.classList.add('hidden');
+  }
+
+  const hidden = auth.currentUser.uid !== post.user.id
+    ? 'hidden'
+    : '';
 
   return (
     <div className="publicacao" id={post.id}>
@@ -93,13 +104,15 @@ export function Post(props) {
       <p>Postado por: <strong>{post.user.name}</strong> - {post.when()}
         <button className={`btn-excluir-post ${hidden}`} onClick={e => confirmarApagarPost(e)}>Excluir</button>
       </p>
-      <p>{post.descricao}</p>
-      <div className='comentarios'>
+      <p className='publicacao-descr'>{post.description}</p>
+      <div className='comments'>
+        <p className='liner'>Comentários</p>
         {
           comentarios.map(comment => <Comentario key={comment.id} comment={comment} postId={post.id}/>)
         }
       </div>
-      <form onSubmit={e => comentar(post.id, e)}>
+      <button class="comment-toggle material-icons light" onClick={e => mostrarComentario(e)}>insert_comment</button>
+      <form className='form-comentario hidden' id={`comentario-form-${post.id}`} onSubmit={e => comentar(post.id, e)}>
         <textarea id={`comentario-post-${post.id}`} placeholder="Digite um comentário..." ></textarea>
         <input type="submit" value="Comentar" />
       </form>

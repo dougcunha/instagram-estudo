@@ -1,6 +1,7 @@
 import { auth } from './firebase';
 import { useState } from 'react';
 import { validarEmail } from './validacoes';
+import validator from 'validator';
 
 function Login(props) {
   const [emailError, setEmailError] = useState('')
@@ -22,15 +23,41 @@ function Login(props) {
           .catch(error => alert(error.message));
   }
 
+  const getEmail = () => document.getElementById('emailLogin').value;
+  const getSenha = () => document.getElementById('senhaLogin').value;
+
+  function ativarBotaoEntrar(e) {
+    const ok = validator.isEmail(getEmail())
+      && validator.isLength(getSenha(), {min: 5, max: 30});
+
+    const botao = document.getElementById('btn-entrar');
+    botao.disabled = !ok;
+  }
+
+  function resetarSenha(e) {
+    e.preventDefault();
+    const email = getEmail();
+    if (!validator.isEmail(email)) {
+      alert('Informe um email válido.');
+
+      return;
+    }
+
+    auth.sendPasswordResetEmail(getEmail())
+      .then(_ => alert('Email enviado'))
+      .catch(err => alert(err.message));
+  }
+
   return (
     <div className='formLogin'>
       <div className='logo'></div>
       <form onSubmit={e => logar(e)}>
         <span className='validacao'>{emailError}</span>
         <input id="emailLogin" onChange={(e) => validarEmail(e, setEmailError)} type="email" placeholder='Email' />
-        <input id="senhaLogin" type="password" placeholder='Senha' />
-        <input type="submit" name="acao" value="Entrar" />
-        <button className='btnCriarConta' onClick={e => mostrarCadastro(e) } href="#">Criar conta</button>
+        <input id="senhaLogin" onChange={e => ativarBotaoEntrar(e)} type="password" placeholder='Senha' />
+        <input id="btn-entrar" type="submit" name="acao" value="Entrar" disabled/>
+        <button id="btnCriarConta" className='btnCriarConta btn-link' onClick={e => mostrarCadastro(e) }>Criar conta</button>
+        <button id="btnResetarSenha" className='btnEsqueciSenha btn-link' onClick={e => resetarSenha(e)}>Esqueci a senha</button>
       </form>
     </div>
   )

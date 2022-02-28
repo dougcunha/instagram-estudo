@@ -1,3 +1,10 @@
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+.material-icons.light {
+  color: #0095f6;
+  background-color: white
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -75,8 +82,7 @@ button.logoff {
   border-radius: 4px;
 }
 
-.formLogin input[type=submit],
-.formLogin button {
+.formLogin input[type=submit] {
   background-color: #0095f6;
   color: white;
   border: 0;
@@ -123,8 +129,7 @@ button.logoff {
   border-radius: 4px;
 }
 
-.formCadastro input[type=submit],
-.formCadastro button {
+.formCadastro input[type=submit] {
   width: 100%;
   height: 30px;
   margin-bottom: 10px;
@@ -136,7 +141,7 @@ button.logoff {
   color: white;
 }
 
-.formCadastro input[type=submit]:disabled {
+input[type=submit]:disabled {
   color: white;
   background-color: rgba(0, 149, 246, 0.3);
   border-color: rgba(0, 0, 0, 0);
@@ -318,11 +323,12 @@ svg {
 }
 
 .publicacao > p {
-  padding: 10px;
+  padding-top: 10px;
+  padding-left: 15px;
 }
 
 .publicacao form {
-  padding: 20px;
+  padding: 15px;
 }
 
 .publicacao textarea {
@@ -331,6 +337,10 @@ svg {
   border: 1px solid #ccc;
   padding: 10px;
   resize: none;
+}
+
+.publicacao-descr {
+  margin-bottom: 10px;
 }
 
 .publicacao input[type=submit] {
@@ -444,6 +454,36 @@ div.dialog button.nao {
   margin: 15px;
 }
 
+.liner {
+  font-weight: 500;
+  color: #dcdcdc;
+  margin-left: 15px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.liner:after {
+  content: "";
+  flex-grow: 1;
+  height: 1px;
+  background: #dcdcdc;
+  min-width: 20px;
+  margin: auto;
+}
+
+.liner:after {
+  margin-left: 10px;
+  margin-top: 14px;
+  margin-right: 15px;
+}
+
+.comments > hr {
+  background-color: #0095f6;
+  border: 10px solid #0095f6;
+}
+
 .comment {
   display: flex;
   padding-left: 15px;
@@ -468,10 +508,30 @@ div.dialog button.nao {
   font-weight: 700;
 }
 
+.comment-toggle {
+  border: 0;
+  margin: 0 15px 5px 15px;
+  cursor: pointer;
+}
+
 .comment-data {
   margin-left: 5px;
   font-size: small;
   font-style: italic;
   display: flex;
   align-items: center;
+}
+
+.form-comentario {
+  --display: none;
+}
+
+button.btn-link {
+  display: block;
+  width: 100%;
+  border: 0;
+  height: 30px;
+  background-color: white;
+  color: #0095f6;
+  cursor: pointer;
 }

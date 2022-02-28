@@ -6,9 +6,13 @@ import { ptBR } from 'date-fns/locale'
 class ModelBase {
   timestamp;
 
+  constructor(timestamp) {
+    this.timestamp = timestamp || firebase.firestore.FieldValue.serverTimestamp();
+  }
+
   when() {
     return formatDistanceToNow(
-      this.timestamp?.toDate() || Date.now(),
+      this.timestamp && this.timestamp.toDate ? this.timestamp.toDate() : Date.now(),
       {
         locale: ptBR,
         addSuffix: true,
@@ -52,12 +56,11 @@ export class ImageModel extends ModelBase {
 
 export class PostModel extends ModelBase {
   constructor(id, description, image, user, timestamp) {
-    super();
+    super(timestamp);
     this.id = id;
     this.description = description;
     this.image = image;
     this.user = user;
-    this.timestamp = timestamp || firebase.firestore.FieldValue.serverTimestamp()
   }
 
   static fromPost(id, post) {
@@ -82,7 +85,7 @@ export class PostModel extends ModelBase {
 
 export class CommentModel extends ModelBase {
   constructor(id, user, message, timestamp, postId) {
-    super();
+    super(timestamp);
     this.id = id;
     this.user = user;
     this.message = message;
@@ -107,5 +110,13 @@ export class CommentModel extends ModelBase {
       message: this.message,
       timestamp: this.timestamp
     }
+  }
+}
+
+export class ProfileModel extends ModelBase {
+  constructor(id, name) {
+    super();
+    this.id = id;
+    this.name = name;
   }
 }

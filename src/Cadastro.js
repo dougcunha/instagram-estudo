@@ -26,7 +26,7 @@ function Cadastro(props) {
             })
         })
         .then(_ => {
-            fecharModalCriar()
+            fecharModalCriar();
         })
         .catch(error => {
             alert(error.message)
@@ -59,7 +59,7 @@ function Cadastro(props) {
            <input id="senhaCadastro" onChange={e => ativarBotao(e)} type="password" placeholder='Senha'></input>
            <input id="submit" type="submit" value="Cadastre-se" disabled/>
            <div className='btnLogin'>
-           <button onClick={e => mostrarLogin(e) } >Fazer login</button>
+           <button className='btn-link' onClick={e => mostrarLogin(e) } >Fazer login</button>
           </div>
            <div className='regrasCadastro'>Ao se cadastrar, você concorda com nossos Termos, Política de Dados e Política de Cookies.</div>
         </form>

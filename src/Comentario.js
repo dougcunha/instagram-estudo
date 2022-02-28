@@ -5,11 +5,6 @@ import { useState } from 'react'
 export function Comentario(props) {
   const comment = props.comment;
   const [dlgApagar, setDlgApagar] = useState(null);
-  const deleteVisible = {
-    display: comment.user.id === auth.currentUser.uid
-      ? 'block'
-      : 'none'
-  };
 
   function confirmarApagarComentario(e, id) {
     e.preventDefault();
@@ -49,12 +44,16 @@ export function Comentario(props) {
     style: {display: 'block'}
   }
 
+  const hidden = auth.currentUser.uid !== comment.user.id
+    ? 'hidden'
+    : '';
+
   return (
     <div className='comment' id={comment.id}>
       <span className='comment-user'>{comment.user.name}</span>
       <span className='comment-msg'>disse: {comment.message}</span>
       <span className='comment-data'> - {comment.when()}</span>
-      <button className='comment-apagar' style={deleteVisible} onClick={e => confirmarApagarComentario(e, comment.id)}>Apagar</button>
+      <button className={`comment-apagar ${hidden}`} onClick={e => confirmarApagarComentario(e, comment.id)}>Apagar</button>
       <DlgApagar {...dlgApagar} />
     </div>
   )
