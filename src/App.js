@@ -5,21 +5,26 @@ import Cadastro from './Cadastro'
 import { Post } from './Post';
 import { FormUpload } from './FormUpload';
 import { useState, useEffect } from 'react'
-import { storage, db } from './firebase';
+import { db, auth } from './firebase';
+import { PostModel } from './modelos';
 
 function App() {
-  const [user, setUser] = useState('Douglas');
+  const [user, setUser] = useState();
   const [novoPost, setNovoPost] = useState();
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
+
+    auth.onAuthStateChanged(val => {
+      console.log(val);
+      setUser(val?.displayName);
+    });
+
     db.collection('posts')
       .orderBy('timestamp', 'desc')
       .onSnapshot(snap => {
         const docs = snap.docs;
-        setPosts(docs.map(p => {
-          return {id: p.id, info: p.data()}
-        }));
+        setPosts(docs.map(item => PostModel.fromPost(item.id, item.data())));
         setNovoPost(docs.length === 0);
       })
   }, []);
@@ -27,10 +32,10 @@ function App() {
   return (
     <div className="App">
       <Header user={user} setUser={setUser} setNovoPost={setNovoPost}></Header>
-      {(!user) && <Login user={user} setUser={setUser} ></Login>}
-      {(!user) && <Cadastro user={user} setUser={setUser} ></Cadastro>}
-      {novoPost && user && <FormUpload user={user} novoPost={novoPost} setNovoPost={setNovoPost}></FormUpload>}
-      { posts.map(val => <Post key={val.id} post={val.info} id={val.id}></Post>) }
+      {(!user) && <Login user={user} setUser={setUser} />}
+      {(!user) && <Cadastro user={user} setUser={setUser} />}
+      {user && novoPost && <FormUpload user={user} novoPost={novoPost} setNovoPost={setNovoPost} />}
+      {user && posts.map(post => <Post key={post.id} post={post} id={post.id} ></Post>) }
     </div>
   );
 }

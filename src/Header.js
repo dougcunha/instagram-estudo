@@ -1,10 +1,11 @@
 import Logo from './Logo';
+import { auth } from './firebase';
 
 function Logado(props) {
   function sair(e) {
     e.preventDefault();
-    props.setUser(null);
-    alert('Logoff efetuado.');
+    auth.signOut().then(e => props.setUser(null));
+    window.location.href = "/";
   }
 
   function abrirNovoPost(e) {

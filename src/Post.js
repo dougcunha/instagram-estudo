@@ -1,17 +1,42 @@
-import { formatDistanceToNow } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
 import { useState, useEffect } from 'react'
-import { ConfirmDlg } from './ConfirmDlg';
 import { storage, db } from './firebase';
+import { DlgApagar } from './ConfirmDlg';
+import { Comentario } from './Comentario';
+import { CommentModel, UserModel } from './modelos';
 
 export function Post(props) {
-  const id = props.id;
   const post = props.post;
-  const data = formatDistanceToNow(post.timestamp?.toDate() || Date.now(), { locale: ptBR, addSuffix: true, includeSeconds: true });
-  const [apagando, setApagando] = useState(false);
+  const [comentarios, setComentarios] = useState([]);
+  const [dlgApagar, setDlgApagar] = useState(null);
+
+  useEffect(() => {
+    db.collection('posts')
+      .doc(post.id)
+      .collection('comentarios')
+      .orderBy('timestamp', 'desc')
+      .onSnapshot(snap => {
+        const docs = snap.docs;
+        setComentarios(docs.map(doc => CommentModel.fromComment(doc.id, post.id, doc.data())))
+      })
+
+  },[post]);
+
   function comentar(id, e) {
     e.preventDefault();
+    const comentario = document.getElementById(`comentario-post-${id}`);
 
+    if (!comentario.value)
+    {
+      alert('Não pode ser vazio');
+      return;
+    }
+
+    db.collection('posts')
+      .doc(id)
+      .collection('comentarios')
+      .add(new CommentModel(null, UserModel.fromAuth(), comentario.value).toSave())
+      .then(_ => { comentario.value = ''; })
+      .catch(err => alert(err.message));
   }
 
   function apagarArquivo(id) {
@@ -30,48 +55,55 @@ export function Post(props) {
     doc.get()
       .then(snap => {
         const doc = snap.data();
-        console.log(JSON.stringify(doc));
         imgId = doc.image.id;
       })
       .then(_ => {
         console.log('Apagando o post ' + id);
         doc.delete()
-          .then(_ => apagarArquivo(imgId));
+          .then(_ => apagarArquivo(imgId))
+          .catch(err => alert(err.message))
       })
 
-    setApagando(false);
+    setDlgApagar(null);
   }
 
   function fecharDlg(e) {
     e.preventDefault();
-    setApagando(false);
+    setDlgApagar(null);
   }
 
-  function confirmar(e) {
+  function confirmarApagarPost(e) {
     e.preventDefault();
-    setApagando(true);
+    setDlgApagar(apagarPostDlg);
   }
 
-  const apagarDlg = {
+  const apagarPostDlg = {
     msg: "Essa operação não pode ser desfeita, continuar?",
-    tipo: "alerta",
     titulo: "Apagar a postagem",
-    simTxt: "Apagar",
-    naoTxt: "Cancelar",
-    sim: e => apagarPost(e, id),
-    nao: e => fecharDlg(e)
+    sim: e => apagarPost(e, post.id),
+    nao: e => fecharDlg(e),
+    style: {display: 'block'}
   }
+
+  const hidden = false; //auth.currentUser?.uid != us
 
   return (
-    <div className="publicacao" id={id}>
+    <div className="publicacao" id={post.id}>
       <img src={post.image.url} alt=""/>
-      <p>Postado por: <strong>{post.userName}</strong> - {data}<button className='btn-excluir-post' onClick={e => confirmar(e)}>Excluir</button></p>
+      <p>Postado por: <strong>{post.user.name}</strong> - {post.when()}
+        <button className={`btn-excluir-post ${hidden}`} onClick={e => confirmarApagarPost(e)}>Excluir</button>
+      </p>
       <p>{post.descricao}</p>
-      <form onSubmit={e => comentar(id, e)}>
-        <textarea id={`comentario-post-${id}`} placeholder="Digite um comentário..." ></textarea>
+      <div className='comentarios'>
+        {
+          comentarios.map(comment => <Comentario key={comment.id} comment={comment} postId={post.id}/>)
+        }
+      </div>
+      <form onSubmit={e => comentar(post.id, e)}>
+        <textarea id={`comentario-post-${post.id}`} placeholder="Digite um comentário..." ></textarea>
         <input type="submit" value="Comentar" />
       </form>
-      <ConfirmDlg style={{display: apagando ? 'block' : 'none'}} {...apagarDlg} />
+      <DlgApagar {...dlgApagar} />
     </div>
   )
 }

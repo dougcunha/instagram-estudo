@@ -18,7 +18,6 @@ function Login(props) {
       auth.signInWithEmailAndPassword(email, senha)
           .then(auth => {
               props.setUser(auth.user.displayName);
-              alert('Logado com sucesso!');
           })
           .catch(error => alert(error.message));
   }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { storage, db } from './firebase';
-import firebase from 'firebase/compat/app';
+import { storage, db, auth } from './firebase';
+import { UserModel, ImageModel, PostModel } from './modelos'
 
 export function FormUpload(props) {
   const [progress, setProgress] = useState(0);
@@ -18,6 +18,7 @@ export function FormUpload(props) {
 
   function uuidv4() {
     return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+      // eslint-disable-next-line
       (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
     );
   }
@@ -43,17 +44,17 @@ export function FormUpload(props) {
       .getDownloadURL()
       .then(url => {
         db.collection('posts')
-          .add({
-            descricao: descricao,
-            image: { url: url, id: imgId },
-            userName: props.user,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          })
+          .add(new PostModel(
+            null,
+            descricao,
+            new ImageModel(imgId, url),
+            UserModel.fromAuth()
+          ).toSave())
       });
 
     setProgress(0);
     setFile(null);
-    fechar();
+    fecharDlg();
   }
 
   function enviarPost(e) {
@@ -62,7 +63,7 @@ export function FormUpload(props) {
     enviarArquivo(file, salvarPost);
   }
 
-  function fechar(e) {
+  function fecharDlg(e) {
     e?.preventDefault();
     props.setNovoPost(false);
   }
@@ -71,7 +72,7 @@ export function FormUpload(props) {
       <div className="modalUpload" style={{display: props.novoPost ? 'block' : 'none'}}>
         <div className="formUpload">
           <progress className={progress ? '' : 'oculto'} id="progress-upload" value={progress} max="100"/>
-          <span className="fechar" onClick={e => fechar(e)}>X</span>
+          <span className="fechar" onClick={e => fecharDlg(e)}>X</span>
           <h2>Criar nova publicação</h2>
           <form id="form-upload" onSubmit={e => enviarPost(e)}>
               <UploadBox {...props} setFile={setFile}></UploadBox>
