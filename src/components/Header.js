@@ -2,7 +2,7 @@ import Logo from './Logo';
 import { app, getAuth } from '../firebase';
 import { useState } from 'react'
 import { Profile } from './Profile';
-import { ProfileModel } from '../modelos';
+import { getUserProfile } from '../data/dados';
 
 function Logado(props) {
   const [perfil, setPerfil] = useState(null);
@@ -20,9 +20,10 @@ function Logado(props) {
     props.setNovoPost(true);
   }
 
-  function verPerfil(e) {
+  async function verPerfil(e) {
     e.preventDefault();
-    setPerfil(ProfileModel.fromFbUser(getAuth(app).currentUser));
+    const profile = await getUserProfile(getAuth(app).currentUser.uid);
+    setPerfil(profile);
   }
 
   return (

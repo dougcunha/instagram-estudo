@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { app, getAuth } from '../firebase';
 
 import {
-  getRealTimeComments,
+  subscribeToComments,
   addComment,
   deletePost,
   getUserProfile
@@ -20,7 +20,7 @@ export function Post(props) {
   const [perfil, setPerfil] = useState(null);
 
   useEffect(() => {
-   getRealTimeComments(post.id, setComentarios);
+   subscribeToComments(post.id, setComentarios);
   },[post]);
 
   async function comentar(id, e) {
@@ -45,8 +45,13 @@ export function Post(props) {
     e.preventDefault();
 
     console.log('Apagando post ' + id);
-    await deletePost(id);
-    setDlgApagar(null);
+    try {
+      await deletePost(id);
+      setDlgApagar(null);
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
   }
 
   function fecharDlg(e) {

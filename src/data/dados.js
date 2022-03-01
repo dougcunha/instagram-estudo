@@ -2,31 +2,46 @@ import {
   app,
   createUserWithEmailAndPassword,
   getFirestore,
+  deleteObject,
   getStorage,
+  doc,
   ref,
   uploadBytesResumable,
   getDownloadURL,
+  updateProfile,
+  getAuth,
   addDoc,
+  deleteDoc,
+  getDoc,
+  getDocs,
+  where,
   collection,
   query,
   orderBy,
   onSnapshot
 } from '../firebase.js';
 
-import { CommentModel, ImageModel, PostModel, ProfileModel, UserModel } from '../modelos.js';
+import {
+  CommentModel,
+  ImageModel,
+  PostModel,
+  ProfileModel,
+  UserModel
+} from '../modelos.js';
 
 export async function createUser(email, password, displayName) {
   try {
-    const authUser = await createUserWithEmailAndPassword(email, password);
-    await this.updateProfile(authUser.user, email, displayName);
+    const authUser = await createUserWithEmailAndPassword(getAuth(app), email, password);
+    await addProfile(authUser.user, email, displayName);
   } catch (error) {
     console.error(error.message)
+    throw error;
   }
 }
 
-export async function updateProfile(user, email, displayName, photoURL) {
+export async function addProfile(user, email, displayName, photoURL) {
   try {
-    await user.updateProfile({
+    await updateProfile(user, {
       displayName: displayName,
       photoURL: photoURL
     });
@@ -36,14 +51,13 @@ export async function updateProfile(user, email, displayName, photoURL) {
       displayName,
       email,
       '',
-      '',
-      Date.now(),
-      Date.now()
+      ''
     );
 
-    await getFirestore(app).collection('profiles').add(profile.toSave());
+    await addDoc(collection(getFirestore(app), 'profiles'), profile.toSave());
   } catch (error) {
     console.error(error.message);
+    throw error;
   }
 }
 
@@ -56,40 +70,27 @@ export async function addComment(postId, message) {
 }
 
 export async function deleteComment(postId, commentId) {
-  const doc = getFirestore(app)
-    .collection('posts')
-    .doc(postId)
-    .collection('comentarios')
-    .doc(commentId);
-
-  await doc.delete();
+  await deleteDoc(doc(getFirestore(app), `posts/${postId}/comments`, commentId));
 }
 
 export async function deleteFromStorage(imgId) {
   console.log('Apagando o arquivo ' + imgId);
-  await getStorage(app)
-    .ref('images')
-    .child(imgId)
-    .delete();
+  const imgRef = ref(getStorage(app), `images/${imgId}`);
+  await deleteObject(imgRef);
 }
 
 export async function deletePost(postId) {
-  const snap = await getFirestore(app)
-    .collection('posts')
-    .doc(postId)
-    .get();
-
-  const doc = snap.data();
-  const imgId = doc.image.id;
-  await doc.delete();
+  const docRef = doc(getFirestore(app), `posts`, postId);
+  const post = await getDoc(docRef);
+  const imgId = post.data().image.id;
+  await deleteDoc(docRef);
   await deleteFromStorage(imgId);
 }
 
 export async function getUserProfile(userId) {
-  const snap = await getFirestore(app)
-    .collection('profiles')
-    .where("uid", "==", userId)
-    .get();
+  const postsRef = collection(getFirestore(app), 'profiles')
+  const q = query(postsRef, where('uid', '==', userId));
+  const snap = await getDocs(q);
 
   if (snap.docs.length === 0)
   {
@@ -97,6 +98,7 @@ export async function getUserProfile(userId) {
 
     return;
   }
+
   const user = snap.docs[0].data();
 
   return ProfileModel.fromJson(user).toObject();
@@ -157,8 +159,7 @@ export async function subscribeToPosts(onPosts) {
   });
 }
 
-
-export async function getRealTimeComments(postId, setComments) {
+export async function subscribeToComments(postId, setComments) {
   const q = query(collection(getFirestore(app), `posts/${postId}/comments`), orderBy('timestamp', 'desc'));
 
   return onSnapshot(q, (querySnapshot) => {

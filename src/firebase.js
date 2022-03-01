@@ -5,9 +5,13 @@ import { serverTimestamp } from 'firebase/firestore';
 import {
     collection,
     getFirestore,
+    doc,
+    deleteDoc,
+    getDoc,
     getDocs,
     addDoc,
     query,
+    where,
     orderBy,
     onSnapshot
 } from 'firebase/firestore';
@@ -16,12 +20,14 @@ import {
     getAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
-    sendPasswordResetEmail
+    sendPasswordResetEmail,
+    updateProfile
 } from "firebase/auth";
 
 import {
     ref,
     getStorage,
+    deleteObject,
     uploadBytes,
     getDownloadURL,
     uploadBytesResumable
@@ -45,18 +51,24 @@ export {
     app,
     getFirestore,
     getAuth,
+    deleteObject,
     getStorage,
     uploadBytes,
     uploadBytesResumable,
+    deleteDoc,
     ref,
     getDownloadURL,
+    updateProfile,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     sendPasswordResetEmail,
+    doc,
+    getDoc,
     getDocs,
     addDoc,
     collection,
     query,
+    where,
     orderBy,
     onSnapshot,
     serverTimestamp
