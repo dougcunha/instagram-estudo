@@ -1,6 +1,6 @@
-import { auth } from './firebase';
+import { app, getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from '../firebase';
 import { useState } from 'react';
-import { validarEmail } from './validacoes';
+import { validarEmail } from '../validacoes';
 import validator from 'validator';
 
 function Login(props) {
@@ -11,16 +11,18 @@ function Login(props) {
       cadastro.style.display = 'block';
   }
 
-  function logar(e) {
+  async function signIn(e) {
       e.preventDefault();
       const email = document.getElementById('emailLogin').value;
       const senha = document.getElementById('senhaLogin').value;
 
-      auth.signInWithEmailAndPassword(email, senha)
-          .then(auth => {
-              props.setUser(auth.user.displayName);
-          })
-          .catch(error => alert(error.message));
+      try {
+        const auth = await signInWithEmailAndPassword(getAuth(app), email, senha);
+        props.setUser(auth.user.displayName);
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
   }
 
   const getEmail = () => document.getElementById('emailLogin').value;
@@ -34,7 +36,7 @@ function Login(props) {
     botao.disabled = !ok;
   }
 
-  function resetarSenha(e) {
+  async function resetarSenha(e) {
     e.preventDefault();
     const email = getEmail();
     if (!validator.isEmail(email)) {
@@ -43,15 +45,19 @@ function Login(props) {
       return;
     }
 
-    auth.sendPasswordResetEmail(getEmail())
-      .then(_ => alert('Email enviado'))
-      .catch(err => alert(err.message));
+    try {
+      await sendPasswordResetEmail(getAuth(app), getEmail());
+      alert('O link para resetar a senha enviado para o email.');
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
   }
 
   return (
     <div className='formLogin'>
       <div className='logo'></div>
-      <form onSubmit={e => logar(e)}>
+      <form onSubmit={e => signIn(e)}>
         <span className='validacao'>{emailError}</span>
         <input id="emailLogin" onChange={(e) => validarEmail(e, setEmailError)} type="email" placeholder='Email' />
         <input id="senhaLogin" onChange={e => ativarBotaoEntrar(e)} type="password" placeholder='Senha' />

@@ -1,66 +1,25 @@
-import { useState, useEffect } from 'react'
-import { storage, db, auth } from './firebase';
-import { UserModel, ImageModel, PostModel } from './modelos'
+import { useState } from 'react'
+import { addPost } from '../data/dados';
 
 export function FormUpload(props) {
   const [progress, setProgress] = useState(0);
   const [file, setFile] = useState(null);
 
-  useEffect(() => {
-
-  }, []);
-
-  function atualizarProgresso(snap) {
-    const progress = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
-    console.log(`progresso: ${progress}`)
-    setProgress(progress);
-  }
-
-  function uuidv4() {
-    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-      // eslint-disable-next-line
-      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-    );
-  }
-
-  function enviarArquivo(file, onsuccess) {
-    const tipo = file.name.split('.').pop();
-    const id = `${uuidv4()}.${tipo}`;
-    return storage
-      .ref(`images/${id}`)
-      .put(file)
-      .on("stage_changed",
-        snap => atualizarProgresso(snap),
-        err => alert(err.message),
-        _ => onsuccess(id)
-      );
-  }
-
-  function salvarPost(imgId) {
-    const descricao = document.getElementById('descricao-post').value;
-    storage
-      .ref('images')
-      .child(imgId)
-      .getDownloadURL()
-      .then(url => {
-        db.collection('posts')
-          .add(new PostModel(
-            null,
-            descricao,
-            new ImageModel(imgId, url),
-            UserModel.fromAuth()
-          ).toSave())
-      });
-
-    setProgress(0);
-    setFile(null);
-    fecharDlg();
-  }
-
   function enviarPost(e) {
     e.preventDefault();
+    const descricao = document.getElementById('descricao-post').value;
 
-    enviarArquivo(file, salvarPost);
+    addPost(
+      file,
+      descricao,
+      setProgress,
+      () => {
+        setProgress(0);
+        setFile(null);
+        fecharDlg();
+      },
+      error => alert(error.message)
+    );
   }
 
   function fecharDlg(e) {

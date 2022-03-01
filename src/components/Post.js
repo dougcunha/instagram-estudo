@@ -1,28 +1,29 @@
 import { useState, useEffect } from 'react'
-import { storage, db, auth } from './firebase';
+import { app, getAuth } from '../firebase';
+
+import {
+  getRealTimeComments,
+  addComment,
+  deletePost,
+  getUserProfile
+} from '../data/dados';
+
 import { DlgApagar } from './ConfirmDlg';
 import { Comentario } from './Comentario';
-import { CommentModel, UserModel } from './modelos';
-import './index';
+import '../index';
+import { Profile } from './Profile';
 
 export function Post(props) {
   const post = props.post;
   const [comentarios, setComentarios] = useState([]);
   const [dlgApagar, setDlgApagar] = useState(null);
+  const [perfil, setPerfil] = useState(null);
 
   useEffect(() => {
-    db.collection('posts')
-      .doc(post.id)
-      .collection('comentarios')
-      .orderBy('timestamp', 'desc')
-      .onSnapshot(snap => {
-        const docs = snap.docs;
-        setComentarios(docs.map(doc => CommentModel.fromComment(doc.id, post.id, doc.data())))
-      })
-
+   getRealTimeComments(post.id, setComentarios);
   },[post]);
 
-  function comentar(id, e) {
+  async function comentar(id, e) {
     e.preventDefault();
     const comentario = document.getElementById(`comentario-post-${id}`);
 
@@ -32,38 +33,19 @@ export function Post(props) {
       return;
     }
 
-    db.collection('posts')
-      .doc(id)
-      .collection('comentarios')
-      .add(new CommentModel(null, UserModel.fromAuth(), comentario.value).toSave())
-      .then(_ => { comentario.value = ''; })
-      .catch(err => alert(err.message));
+    try {
+      await addComment(id, comentario.value);
+      comentario.value = '';
+    } catch (error) {
+      alert(error.message)
+    }
   }
 
-  function apagarArquivo(id) {
-    console.log('Apagando o arquivo ' + id);
-    return storage.ref('images').child(id).delete()
-      .then(console.log(`Arquivo ${id} apagado.`))
-  }
-
-  function apagarPost(e, id) {
+  async function apagarPost(e, id) {
     e.preventDefault();
-    const doc = db.collection("posts").doc(id);
+
     console.log('Apagando post ' + id);
-    let imgId;
-
-    doc.get()
-      .then(snap => {
-        const doc = snap.data();
-        imgId = doc.image.id;
-      })
-      .then(_ => {
-        console.log('Apagando o post ' + id);
-        doc.delete()
-          .then(_ => apagarArquivo(imgId))
-          .catch(err => alert(err.message))
-      })
-
+    await deletePost(id);
     setDlgApagar(null);
   }
 
@@ -94,14 +76,26 @@ export function Post(props) {
       form.classList.add('hidden');
   }
 
-  const hidden = auth.currentUser.uid !== post.user.id
+  async function verPerfil(e, uid) {
+    e.preventDefault();
+
+    try {
+      const profile = await getUserProfile(uid);
+      setPerfil(profile);
+    } catch (error) {
+      console.error(error.message);
+      alert(error.message);
+    }
+  }
+
+  const hidden = getAuth(app).currentUser.uid !== post.user.id
     ? 'hidden'
     : '';
 
   return (
     <div className="publicacao" id={post.id}>
       <img src={post.image.url} alt=""/>
-      <p>Postado por: <strong>{post.user.name}</strong> - {post.when()}
+      <p>Postado por: <span className='user-name' onClick={e => verPerfil(e, post.user.id)}>{post.user.name}</span> - {post.when()}
         <button className={`btn-excluir-post ${hidden}`} onClick={e => confirmarApagarPost(e)}>Excluir</button>
       </p>
       <p className='publicacao-descr'>{post.description}</p>
@@ -111,12 +105,13 @@ export function Post(props) {
           comentarios.map(comment => <Comentario key={comment.id} comment={comment} postId={post.id}/>)
         }
       </div>
-      <button class="comment-toggle material-icons light" onClick={e => mostrarComentario(e)}>insert_comment</button>
+      <button className="comment-toggle material-icons light" onClick={e => mostrarComentario(e)}>insert_comment</button>
       <form className='form-comentario hidden' id={`comentario-form-${post.id}`} onSubmit={e => comentar(post.id, e)}>
         <textarea id={`comentario-post-${post.id}`} placeholder="Digite um comentário..." ></textarea>
         <input type="submit" value="Comentar" />
       </form>
       <DlgApagar {...dlgApagar} />
+      {perfil && <Profile user={perfil} setPerfil={setPerfil} />}
     </div>
   )
 }

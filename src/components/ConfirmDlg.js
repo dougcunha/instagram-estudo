@@ -1,4 +1,4 @@
-import alerta from './img/alerta.png';
+import alerta from '../img/alerta.png';
 
 export function DlgApagar(props) {
   return (

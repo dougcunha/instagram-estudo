@@ -1,42 +1,36 @@
-import { auth } from './firebase.js';
 import validator from 'validator';
 import { useState } from 'react';
-import { validarEmail } from './validacoes.js';
+import { validarEmail } from '../validacoes.js';
+import { createUser } from '../data/dados';
 
 function Cadastro(props) {
   function fecharModalCriar(e) {
-    const modal = document.getElementById('modalCriarConta');
+    const modal = document.getElementById('formCadastro');
     modal.style.display = 'none';
   }
+
   const [emailError, setEmailError] = useState('')
   const getEmail = () => document.getElementById('emailCadastro').value;
-  const getUserName = () => document.getElementById('usernameCadastro').value;
-  const getSenha = () => document.getElementById('senhaCadastro').value;
+  const getDisplayName = () => document.getElementById('usernameCadastro').value;
+  const getPassword = () => document.getElementById('senhaCadastro').value;
 
-  function criarConta(e) {
+  async function criarConta(e) {
     e.preventDefault();
-    const email = getEmail();
-    const userName = getUserName();
-    const senha = getSenha();
 
-    auth.createUserWithEmailAndPassword(email, senha)
-        .then(authUser => {
-            authUser.user.updateProfile({
-                displayName: userName
-            })
-        })
-        .then(_ => {
-            fecharModalCriar();
-        })
-        .catch(error => {
-            alert(error.message)
-        })
+    try {
+      await createUser(getEmail(), getPassword(), getDisplayName());
+      alert('Conta criada com sucesso!');
+      fecharModalCriar();
+      window.location.href = "/";
+    } catch (error) {
+      alert(error.message);
+    }
   }
 
   function ativarBotao(e) {
     const ok = validator.isEmail(getEmail())
-      && validator.isLength(getUserName(), {min: 5, max: 30})
-      && validator.isLength(getSenha(), {min: 5, max: 30});
+      && validator.isLength(getDisplayName(), {min: 5, max: 30})
+      && validator.isLength(getPassword(), {min: 5, max: 30});
 
     const botao = document.getElementById('submit');
     botao.disabled = !ok;

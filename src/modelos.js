@@ -1,13 +1,12 @@
-import firebase from 'firebase/compat/app';
-import { auth } from './firebase';
+import { app, serverTimestamp, getAuth } from './firebase';
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
 class ModelBase {
   timestamp;
 
-  constructor(timestamp) {
-    this.timestamp = timestamp || firebase.firestore.FieldValue.serverTimestamp();
+  constructor() {
+    this.timestamp = serverTimestamp();
   }
 
   when() {
@@ -38,7 +37,7 @@ export class UserModel extends ModelBase {
   }
 
   static fromAuth() {
-    return new UserModel(auth.currentUser.uid, auth.currentUser.displayName);
+    return new UserModel(getAuth(app).currentUser.uid, getAuth(app).currentUser.displayName);
   }
 }
 
@@ -55,8 +54,8 @@ export class ImageModel extends ModelBase {
 }
 
 export class PostModel extends ModelBase {
-  constructor(id, description, image, user, timestamp) {
-    super(timestamp);
+  constructor(id, description, image, user) {
+    super();
     this.id = id;
     this.description = description;
     this.image = image;
@@ -68,8 +67,7 @@ export class PostModel extends ModelBase {
       id,
       post.description,
       ImageModel.fromImage(post.image),
-      UserModel.fromUser(post.user),
-      post.timestamp
+      UserModel.fromUser(post.user)
     );
   }
 
@@ -78,18 +76,17 @@ export class PostModel extends ModelBase {
       description: this.description,
       image: this.image.toObject(),
       user: this.user.toObject(),
-      timestamp: this.timestamp
+      timestamp: serverTimestamp()
     }
   }
 }
 
 export class CommentModel extends ModelBase {
-  constructor(id, user, message, timestamp, postId) {
-    super(timestamp);
+  constructor(id, user, message, postId) {
+    super();
     this.id = id;
     this.user = user;
     this.message = message;
-    this.timestamp = timestamp || firebase.firestore.FieldValue.serverTimestamp();
     this.postId = postId;
   }
 
@@ -98,25 +95,56 @@ export class CommentModel extends ModelBase {
       id,
       comment.user,
       comment.message,
-      comment.timestamp,
       postId
     );
   }
 
   toSave() {
     return {
-      id: this.id,
       user: this.user.toObject(),
       message: this.message,
-      timestamp: this.timestamp
+      timestamp: serverTimestamp()
     }
   }
 }
 
 export class ProfileModel extends ModelBase {
-  constructor(id, name) {
+  id = '';
+  name = '';
+  email = '';
+  phone = 'não informado';
+  photoURL = '';
+  createdAt = null;
+  lastLoginAt = null;
+
+  constructor(id, name, email, phone, photoURL) {
     super();
     this.id = id;
     this.name = name;
+    this.email = email;
+    this.phone = phone;
+    this.photoUrl = photoURL;
+  }
+
+  static fromJson(user, displayName) {
+    return new ProfileModel(
+      user.uid,
+      displayName,
+      user.email,
+      user.phoneNumber || '',
+      user.photoURL || ''
+    );
+  }
+
+  toSave() {
+    return {
+      uid: this.id,
+      displayName: this.name,
+      email: this.email,
+      phoneNumber: this.phone,
+      photoURL: this.photoUrl,
+      createdAt: serverTimestamp(),
+      lastLoginAt: serverTimestamp()
+    }
   }
 }

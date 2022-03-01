@@ -1,6 +1,7 @@
 import { DlgApagar } from './ConfirmDlg';
-import { db, auth } from './firebase';
 import { useState } from 'react'
+import { deleteComment } from '../data/dados';
+import { app, getAuth } from '../firebase';
 
 export function Comentario(props) {
   const comment = props.comment;
@@ -12,21 +13,16 @@ export function Comentario(props) {
     setDlgApagar(apagarComentarioDlg);
   }
 
-  function apagarComentario(e) {
+  async function apagarComentario(e) {
     e.preventDefault();
     console.log('Apagando o comentário ' + comment.id);
 
-    const doc = db
-       .collection('posts')
-       .doc(comment.postId)
-       .collection('comentarios')
-       .doc(comment.id);
-
-    doc.delete()
-      .then(_ => {
-        console.log('Comentário apagado ' + comment.id);
-      })
-      .catch(err => alert(err.message));
+    try {
+      await deleteComment(comment.postId, comment.id);
+      console.log('Comentário apagado ' + comment.id);
+    } catch (error) {
+      alert(error.message)
+    }
 
     setDlgApagar(null);
   }
@@ -44,7 +40,7 @@ export function Comentario(props) {
     style: {display: 'block'}
   }
 
-  const hidden = auth.currentUser.uid !== comment.user.id
+  const hidden = getAuth(app).currentUser.uid !== comment.user.id
     ? 'hidden'
     : '';
 

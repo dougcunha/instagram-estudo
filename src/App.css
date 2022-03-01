@@ -27,7 +27,8 @@ body {
 }
 
 button.novo-post,
-button.logoff {
+button.logoff,
+.botao {
   color: white;
   background-color: #0095f6;
   border: 0;
@@ -39,8 +40,14 @@ button.logoff {
   border-radius: 4px;
 }
 
+
 .headerLogo {
   padding: 15px 0 0 15px;
+}
+
+.user-name {
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .headerLogoImg {
@@ -522,10 +529,6 @@ div.dialog button.nao {
   align-items: center;
 }
 
-.form-comentario {
-  --display: none;
-}
-
 button.btn-link {
   display: block;
   width: 100%;
@@ -534,4 +537,21 @@ button.btn-link {
   background-color: white;
   color: #0095f6;
   cursor: pointer;
+}
+
+.profile {
+  background-color: white;
+  border-radius: 4px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  width: 80%;
+  max-width: 300px;
+  text-align: center;
+}
+
+.profile button {
+  margin-top: 10px;
 }

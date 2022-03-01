@@ -1,12 +1,12 @@
 import './App.css';
-import Header from './Header'
-import Login from './Login'
-import Cadastro from './Cadastro'
-import { Post } from './Post';
-import { FormUpload } from './FormUpload';
+import Header from './components/Header'
+import Login from './components/Login'
+import Cadastro from './components/Cadastro'
+import { Post } from './components/Post';
+import { FormUpload } from './components/FormUpload';
 import { useState, useEffect } from 'react'
-import { db, auth } from './firebase';
-import { PostModel } from './modelos';
+import { app, getAuth } from './firebase';
+import { subscribeToPosts } from './data/dados';
 
 function App() {
   const [user, setUser] = useState();
@@ -15,18 +15,14 @@ function App() {
 
   useEffect(() => {
 
-    auth.onAuthStateChanged(val => {
-      console.log(val);
+    getAuth(app).onAuthStateChanged(val => {
       setUser(val?.displayName);
     });
 
-    db.collection('posts')
-      .orderBy('timestamp', 'desc')
-      .onSnapshot(snap => {
-        const docs = snap.docs;
-        setPosts(docs.map(item => PostModel.fromPost(item.id, item.data())));
-        setNovoPost(docs.length === 0);
-      })
+    subscribeToPosts(posts => {
+      setPosts(posts);
+      setNovoPost(posts.length === 0);
+    });
   }, []);
 
   return (
