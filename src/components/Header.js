@@ -2,7 +2,7 @@ import Logo from './Logo';
 import { app, getAuth } from '../firebase';
 import { useState } from 'react'
 import { Profile } from './Profile';
-import { getUserProfile } from '../data/dados';
+import { getUserProfile } from '../data/db';
 
 function Logado(props) {
   const [perfil, setPerfil] = useState(null);

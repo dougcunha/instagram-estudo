@@ -1,7 +1,7 @@
 import validator from 'validator';
 import { useState } from 'react';
 import { validarEmail } from '../validacoes.js';
-import { createUser } from '../data/dados';
+import { createUser } from '../data/db';
 
 function Cadastro(props) {
   function fecharModalCriar(e) {

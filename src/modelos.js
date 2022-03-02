@@ -1,5 +1,5 @@
 import { app, serverTimestamp, getAuth } from './firebase';
-import { formatDistanceToNow } from 'date-fns'
+import { format, formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
 class ModelBase {
@@ -108,40 +108,65 @@ export class CommentModel extends ModelBase {
   }
 }
 
+export function parseToDate(value) {
+  if (!value)
+    return null;
+
+   if (value instanceof Date)
+   	return value;
+
+  if (Number.isFinite(value))
+    return new Date(value * 1);
+
+  return value?.toDate?.();
+}
+
+export function toFormatedDate(value, fmt = 'dd/MM/yyyy HH:mm') {
+  const date = parseToDate(value);
+  if (!date)
+    return '';
+
+  return format(date, fmt)
+}
+
 export class ProfileModel extends ModelBase {
-  id = '';
-  name = '';
+  uid = '';
+  displayName = '';
   email = '';
-  phone = 'não informado';
+  phoneNumber = 'não informado';
   photoURL = '';
   createdAt = null;
   lastLoginAt = null;
 
-  constructor(id, name, email, phone, photoURL) {
+  constructor(uid, displayName, email, phone, photoURL, createdAt, lastLoginAt) {
     super();
-    this.id = id;
-    this.name = name;
+    this.uid = uid;
+    this.displayName = displayName;
     this.email = email;
-    this.phone = phone;
+    this.phoneNumber = phone;
     this.photoUrl = photoURL;
+    this.createdAt = createdAt;
+    this.lastLoginAt = lastLoginAt;
   }
 
-  static fromJson(user, displayName) {
+  static fromJson(user) {
     return new ProfileModel(
       user.uid,
-      displayName,
+      user.displayName,
       user.email,
       user.phoneNumber || '',
-      user.photoURL || ''
+      user.photoURL || '',
+      user.createdAt,
+      user.lastLoginAt
     );
   }
 
   toSave() {
     return {
-      uid: this.id,
-      displayName: this.name,
+      uid: this.uid,
+      displayName: this.displayName,
       email: this.email,
-      phoneNumber: this.phone,
+      phoneNumber: this.phoneNumber,
       photoURL: this.photoUrl,
       createdAt: serverTimestamp(),
       lastLoginAt: serverTimestamp()

@@ -34,7 +34,7 @@ export async function createUser(email, password, displayName) {
     const authUser = await createUserWithEmailAndPassword(getAuth(app), email, password);
     await addProfile(authUser.user, email, displayName);
   } catch (error) {
-    console.error(error.message)
+    console.error(error)
     throw error;
   }
 }
@@ -56,7 +56,7 @@ export async function addProfile(user, email, displayName, photoURL) {
 
     await addDoc(collection(getFirestore(app), 'profiles'), profile.toSave());
   } catch (error) {
-    console.error(error.message);
+    console.error(error);
     throw error;
   }
 }

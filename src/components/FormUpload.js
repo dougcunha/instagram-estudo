@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { addPost } from '../data/dados';
+import { addPost } from '../data/db';
 
 export function FormUpload(props) {
   const [progress, setProgress] = useState(0);

@@ -6,7 +6,7 @@ import { Post } from './components/Post';
 import { FormUpload } from './components/FormUpload';
 import { useState, useEffect } from 'react'
 import { app, getAuth } from './firebase';
-import { subscribeToPosts } from './data/dados';
+import { subscribeToPosts } from './data/db';
 
 function App() {
   const [user, setUser] = useState();

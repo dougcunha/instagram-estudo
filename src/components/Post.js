@@ -6,7 +6,7 @@ import {
   addComment,
   deletePost,
   getUserProfile
-} from '../data/dados';
+} from '../data/db';
 
 import { DlgApagar } from './ConfirmDlg';
 import { Comentario } from './Comentario';
