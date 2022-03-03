@@ -14,10 +14,13 @@ import '../index';
 import { Profile } from './Profile';
 
 export function Post(props) {
+  const likedClass = 'fa fa-heart material-icons f18';
+  const notlikedClass = 'fa fa-heart-o material-icons f18';
   const post = props.post;
   const [comentarios, setComentarios] = useState([]);
   const [dlgApagar, setDlgApagar] = useState(null);
   const [perfil, setPerfil] = useState(null);
+  const [liked, setLiked] = useState(false);
 
   useEffect(() => {
    subscribeToComments(post.id, setComentarios);
@@ -97,11 +100,25 @@ export function Post(props) {
     ? 'hidden'
     : '';
 
+  function toggleLike(e) {
+    e.preventDefault();
+    setLiked(!liked);
+  }
+
   return (
     <div className="publicacao" id={post.id}>
-      <img src={post.image.url} alt=""/>
-      <p>Postado por: <span className='user-name' onClick={e => verPerfil(e, post.user.id)}>{post.user.name}</span> - {post.when()}
-        <button className={`btn-excluir-post ${hidden}`} onClick={e => confirmarApagarPost(e)}>Excluir</button>
+      <div className='photo'>
+        <img src={post.image.url} alt=""/>
+      </div>
+      <p className='postado-por'><span id={`heart${post.id}`} className='div-like'>
+        <b onClick={e => toggleLike(e)} class={liked ? likedClass : notlikedClass} >
+        favorite
+        </b>
+      </span>
+      Postado por:
+          <span className='user-name' onClick={e => verPerfil(e, post.user.id)}> {post.user.name}</span>
+           - {post.when()}
+          <button className={`btn-excluir-post ${hidden}`} onClick={e => confirmarApagarPost(e)}>Excluir</button>
       </p>
       <p className='publicacao-descr'>{post.description}</p>
       <div className='comments'>

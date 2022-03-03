@@ -5,8 +5,8 @@ import { ptBR } from 'date-fns/locale'
 class ModelBase {
   timestamp;
 
-  constructor() {
-    this.timestamp = serverTimestamp();
+  constructor(timestamp) {
+    this.timestamp = timestamp ?? serverTimestamp();
   }
 
   when() {
@@ -54,8 +54,8 @@ export class ImageModel extends ModelBase {
 }
 
 export class PostModel extends ModelBase {
-  constructor(id, description, image, user) {
-    super();
+  constructor(id, description, image, user, timestamp) {
+    super(timestamp);
     this.id = id;
     this.description = description;
     this.image = image;
@@ -67,7 +67,8 @@ export class PostModel extends ModelBase {
       id,
       post.description,
       ImageModel.fromImage(post.image),
-      UserModel.fromUser(post.user)
+      UserModel.fromUser(post.user),
+      post.timestamp
     );
   }
 
@@ -82,20 +83,21 @@ export class PostModel extends ModelBase {
 }
 
 export class CommentModel extends ModelBase {
-  constructor(id, user, message, postId) {
-    super();
+  constructor(id, user, message, postId, timestamp) {
+    super(timestamp);
     this.id = id;
     this.user = user;
     this.message = message;
     this.postId = postId;
   }
 
-  static fromComment(id, postId, comment) {
+  static fromComment(id, postId, comment, timestamp) {
     return new CommentModel(
       id,
       comment.user,
       comment.message,
-      postId
+      postId,
+      comment.timestamp
     );
   }
 
