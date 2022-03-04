@@ -24,6 +24,7 @@ import {
 import {
   CommentModel,
   ImageModel,
+  LikeModel,
   PostModel,
   ProfileModel,
   UserModel
@@ -69,8 +70,34 @@ export async function addComment(postId, message) {
   );
 }
 
+export async function addLike(postId, user) {
+  await addDoc(
+    collection(getFirestore(app),
+    `posts/${postId}/likes`),
+    new LikeModel(null, UserModel.fromAuth(user), postId).toSave()
+  );
+}
+
 export async function deleteComment(postId, commentId) {
   await deleteDoc(doc(getFirestore(app), `posts/${postId}/comments`, commentId));
+}
+
+export async function getLike(postId) {
+  const postsRef = collection(getFirestore(app), `posts/${postId}/likes`)
+  const q = query(postsRef, where('user.id', '==', getAuth(app).currentUser.uid));
+  const snap = await getDocs(q);
+
+  if (snap.docs.length === 0)
+    return;
+
+  const like = snap.docs[0].data();
+
+  return LikeModel.fromJson(snap.docs[0].id, postId, like).toObject();
+}
+
+export async function deleteLike(like) {
+  if (like)
+    await deleteDoc(doc(getFirestore(app), `posts/${like.postId}/likes`, like.id));
 }
 
 export async function deleteFromStorage(imgId) {
@@ -166,5 +193,19 @@ export async function subscribeToComments(postId, setComments) {
     const docs = querySnapshot.docs;
     const comments = docs.map(item => CommentModel.fromComment(item.id, postId, item.data()))
     setComments(comments)
+  });
+}
+
+export async function subscribeToLike(postId, setLike) {
+  const q = query(collection(getFirestore(app), `posts/${postId}/likes`), where('user.id', '==', getAuth(app).currentUser.uid));
+
+  return onSnapshot(q, (querySnapshot) => {
+    const docs = querySnapshot.docs;
+    if (docs.length > 0)
+    {
+      const like = docs[0].data();
+      setLike(CommentModel.fromComment(docs[0].id, postId, like))
+    } else
+      setLike(null);
   });
 }

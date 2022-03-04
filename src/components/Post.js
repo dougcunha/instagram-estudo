@@ -5,7 +5,10 @@ import {
   subscribeToComments,
   addComment,
   deletePost,
-  getUserProfile
+  getUserProfile,
+  addLike,
+  deleteLike,
+  subscribeToLike
 } from '../data/db';
 
 import { DlgApagar } from './ConfirmDlg';
@@ -14,16 +17,18 @@ import '../index';
 import { Profile } from './Profile';
 
 export function Post(props) {
-  const likedClass = 'fa fa-heart material-icons f18';
-  const notlikedClass = 'fa fa-heart-o material-icons f18';
+  const likedClass = 'fa fa-heart-o material-icons f18';
+  const notlikedClass = 'fa fa-heart material-icons f18';
   const post = props.post;
+  const user = getAuth(app).currentUser;
   const [comentarios, setComentarios] = useState([]);
   const [dlgApagar, setDlgApagar] = useState(null);
   const [perfil, setPerfil] = useState(null);
-  const [liked, setLiked] = useState(false);
+  const [like, setLike] = useState(null);
 
   useEffect(() => {
-   subscribeToComments(post.id, setComentarios);
+    subscribeToComments(post.id, setComentarios);
+    subscribeToLike(post.id, setLike);
   },[post]);
 
   async function comentar(id, e) {
@@ -96,13 +101,22 @@ export function Post(props) {
     }
   }
 
-  const hidden = getAuth(app).currentUser.uid !== post.user.id
+  const hidden = user.uid !== post.user.id
     ? 'hidden'
     : '';
 
-  function toggleLike(e) {
+  async function toggleLike(e, postId) {
     e.preventDefault();
-    setLiked(!liked);
+
+    try {
+      if (!like)
+        await addLike(postId, user);
+      else
+        await deleteLike(like);
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
   }
 
   return (
@@ -111,7 +125,7 @@ export function Post(props) {
         <img src={post.image.url} alt=""/>
       </div>
       <p className='postado-por'><span id={`heart${post.id}`} className='div-like'>
-        <b onClick={e => toggleLike(e)} class={liked ? likedClass : notlikedClass} >
+        <b onClick={e => toggleLike(e, post.id)} class={like ? likedClass : notlikedClass} >
         favorite
         </b>
       </span>

@@ -82,6 +82,32 @@ export class PostModel extends ModelBase {
   }
 }
 
+export class LikeModel extends ModelBase {
+  constructor(id, user, postId, timestamp) {
+    super(timestamp);
+    this.id = id;
+    this.user = user;
+    this.postId = postId;
+  }
+
+  static fromJson(id, postId, like) {
+    return new LikeModel(
+      id,
+      like.user,
+      postId,
+      like.timestamp
+    );
+  }
+
+  toSave() {
+    return {
+      user: this.user.toObject(),
+      postId: this.postId,
+      timestamp: serverTimestamp()
+    }
+  }
+}
+
 export class CommentModel extends ModelBase {
   constructor(id, user, message, postId, timestamp) {
     super(timestamp);
@@ -91,7 +117,7 @@ export class CommentModel extends ModelBase {
     this.postId = postId;
   }
 
-  static fromComment(id, postId, comment, timestamp) {
+  static fromComment(id, postId, comment) {
     return new CommentModel(
       id,
       comment.user,
@@ -105,7 +131,8 @@ export class CommentModel extends ModelBase {
     return {
       user: this.user.toObject(),
       message: this.message,
-      timestamp: serverTimestamp()
+      timestamp: serverTimestamp(),
+      postId: this.postId
     }
   }
 }
