@@ -66,7 +66,7 @@ export async function addComment(postId, message) {
   await addDoc(
     collection(getFirestore(app),
     `posts/${postId}/comments`),
-    new CommentModel(null, UserModel.fromAuth(), message).toSave()
+    new CommentModel(null, UserModel.fromAuth(), message, postId).toSave()
   );
 }
 
