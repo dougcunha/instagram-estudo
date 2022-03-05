@@ -209,3 +209,18 @@ export async function subscribeToLike(postId, setLike) {
       setLike(null);
   });
 }
+
+export async function subscribeToLikes(postId, setLikes) {
+    const q = query(collection(getFirestore(app), `posts/${postId}/likes`));
+
+  return onSnapshot(q, (querySnapshot) => {
+    const docs = querySnapshot.docs;
+
+    const likes = docs.map(d => {
+      const like = d.data();
+      return new LikeModel(d.id, UserModel.fromUser(like.user), postId, like.timestamp);
+    });
+
+    setLikes(likes);
+  });
+}

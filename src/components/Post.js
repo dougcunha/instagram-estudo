@@ -8,31 +8,37 @@ import {
   getUserProfile,
   addLike,
   deleteLike,
-  subscribeToLike
+  subscribeToLike,
+  subscribeToLikes
 } from '../data/db';
 
 import { DlgApagar } from './ConfirmDlg';
 import { Comentario } from './Comentario';
 import '../index';
 import { Profile } from './Profile';
+import nophoto from '../img/nophoto.png';
 
 export function Post(props) {
-  const likedClass = 'fa fa-heart-o material-icons f18';
-  const notlikedClass = 'fa fa-heart material-icons f18';
+  const likedClass = 'fa fa-heart-o material-icons f25';
+  const notlikedClass = 'fa fa-heart material-icons f25';
   const post = props.post;
   const user = getAuth(app).currentUser;
   const [comentarios, setComentarios] = useState([]);
   const [dlgApagar, setDlgApagar] = useState(null);
   const [perfil, setPerfil] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [like, setLike] = useState(null);
+  const [likes, setLikes] = useState([]);
 
   useEffect(() => {
     subscribeToComments(post.id, setComentarios);
     subscribeToLike(post.id, setLike);
-  },[post]);
+    subscribeToLikes(post.id, setLikes);
+    getUserProfile(post.user.id).then(p => setProfile(p));
+  },[post, user]);
 
-  async function comentar(id, e) {
-    e.preventDefault();
+  async function newComment(id, e) {
+    e.preventDefault?.();
     const comentario = document.getElementById(`comentario-post-${id}`);
 
     if (!comentario.value)
@@ -67,7 +73,7 @@ export function Post(props) {
     setDlgApagar(null);
   }
 
-  function confirmarApagarPost(e) {
+  function confirmDeletePost(e) {
     e.preventDefault();
     setDlgApagar(apagarPostDlg);
   }
@@ -80,16 +86,7 @@ export function Post(props) {
     style: {display: 'block'}
   }
 
-  function mostrarComentario(e) {
-    const form = document.getElementById(`comentario-form-${post.id}`);
-
-    if (form.classList.contains('hidden'))
-      form.classList.remove('hidden');
-    else
-      form.classList.add('hidden');
-  }
-
-  async function verPerfil(e, uid) {
+  async function showProfile(e, uid) {
     e.preventDefault();
 
     try {
@@ -119,32 +116,49 @@ export function Post(props) {
     }
   }
 
+  function getLikes() {
+    if (likes.length === 0)
+      return 'Seja o primeiro a curtir!';
+
+    if (likes.length === 1)
+      return <span><b>{likes[0].user.name}</b> curtiu</span>;
+
+    let i = 0;
+    let str = [];
+    while (i < 5 && i < likes.length) {
+      str.push(likes[i].user.name);
+      i++;
+    }
+
+    return <span>{likes.length} pessoas curtiram, incluindo <b>{str.join(', ')}</b></span>
+  }
+
   return (
     <div className="publicacao" id={post.id}>
+      <div className='postHeader'>
+        <img className='postPerfilPhoto' src={profile?.photoURL || nophoto} alt=""></img>
+        <p><span className='user-name' onClick={e => showProfile(e, post.user.id)}> {post.user.name}</span> - {post.when()}</p>
+        <button className={`btnExcluirPost ${hidden} material-icons light`} onClick={e => confirmDeletePost(e)}>delete</button>
+      </div>
       <div className='photo'>
-        <img src={post.image.url} alt=""/>
+        <img src={post.image.url} alt="" onDoubleClick={e => toggleLike(e, post.id)}/>
+        <span className={'material-icons photoLike ' + (like ? 'like-o' : '')} onDoubleClick={e => toggleLike(e, post.id)}>favorite</span>
       </div>
       <p className='postado-por'><span id={`heart${post.id}`} className='div-like'>
-        <b onClick={e => toggleLike(e, post.id)} class={like ? likedClass : notlikedClass} >
-        favorite
-        </b>
+        <b onClick={e => toggleLike(e, post.id)} className={like ? likedClass : notlikedClass} >
+          favorite
+        </b><span className='postLikes'>{getLikes()}</span>
       </span>
-      Postado por:
-          <span className='user-name' onClick={e => verPerfil(e, post.user.id)}> {post.user.name}</span>
-           - {post.when()}
-          <button className={`btn-excluir-post ${hidden}`} onClick={e => confirmarApagarPost(e)}>Excluir</button>
       </p>
       <p className='publicacao-descr'>{post.description}</p>
       <div className='comments'>
-        <p className='liner'>Comentários</p>
         {
           comentarios.map(comment => <Comentario key={comment.id} comment={comment} postId={post.id}/>)
         }
       </div>
-      <button className="comment-toggle material-icons light" onClick={e => mostrarComentario(e)}>insert_comment</button>
-      <form className='form-comentario hidden' id={`comentario-form-${post.id}`} onSubmit={e => comentar(post.id, e)}>
-        <textarea id={`comentario-post-${post.id}`} placeholder="Digite um comentário..." ></textarea>
-        <input type="submit" value="Comentar" />
+      <form className='form-comentario' id={`comentario-form-${post.id}`} onSubmit={e => newComment(post.id, e)}>
+        <textarea id={`comentario-post-${post.id}`} placeholder="Adicione um comentário..." ></textarea>
+        <input type="submit" value="Publicar" />
       </form>
       <DlgApagar {...dlgApagar} />
       {perfil && <Profile user={perfil} setPerfil={setPerfil} />}

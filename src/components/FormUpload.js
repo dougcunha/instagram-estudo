@@ -28,7 +28,7 @@ export function FormUpload(props) {
   }
 
   return  (
-      <div className="modalUpload" style={{display: props.novoPost ? 'block' : 'none'}}>
+      (props.novoPost) && <div className="modalUpload">
         <div className="formUpload">
           <progress className={progress ? '' : 'oculto'} id="progress-upload" value={progress} max="100"/>
           <span className="fechar" onClick={e => fecharDlg(e)}>X</span>

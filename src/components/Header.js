@@ -27,11 +27,11 @@ function Logado(props) {
   }
 
   return (
-    <span className='logado'>
-      Bem vindo <span className='user-name' onClick={e => verPerfil(e)}>{props.user}!</span>
+    <span className='logado'><span className={getAuth(app).currentUser.uid}></span>
+      {perfil && <Profile user={perfil} setPerfil={setPerfil} />}
+      Bem vindo <span className='user-name' onClick={e => verPerfil(e)}>{props.user}</span>
       <button className='logoff' onClick={e => sair(e)}> Sair </button>
       <button className='novo-post' onClick={e => abrirNovoPost(e)}>Publicar</button>
-      {perfil && <Profile user={perfil} setPerfil={setPerfil} />}
     </span>
   )
 }

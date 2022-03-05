@@ -173,7 +173,7 @@ export class ProfileModel extends ModelBase {
     this.displayName = displayName;
     this.email = email;
     this.phoneNumber = phone;
-    this.photoUrl = photoURL;
+    this.photoURL = photoURL;
     this.createdAt = createdAt;
     this.lastLoginAt = lastLoginAt;
   }

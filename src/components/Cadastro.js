@@ -2,6 +2,7 @@ import validator from 'validator';
 import { useState } from 'react';
 import { validarEmail } from '../validacoes.js';
 import { createUser } from '../data/db';
+import logo from '../img/instagrado.png';
 
 function Cadastro(props) {
   function fecharModalCriar(e) {
@@ -44,7 +45,7 @@ function Cadastro(props) {
 
   return (
     <div className='formCadastro' id='formCadastro'>
-        <div className='logo'></div>
+        <div className='logo'><img src={logo} alt=""/></div>
         <h2>Cadastre-se para ver fotos e vídeos dos seus amigos.</h2>
         <form onSubmit={(e) => criarConta(e)}>
            <span className='validacao'>{emailError}</span>

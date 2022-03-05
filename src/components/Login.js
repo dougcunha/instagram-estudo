@@ -2,6 +2,7 @@ import { app, getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from
 import { useState } from 'react';
 import { validarEmail } from '../validacoes';
 import validator from 'validator';
+import logo from '../img/instagrado.png';
 
 function Login(props) {
   const [emailError, setEmailError] = useState('')
@@ -56,7 +57,7 @@ function Login(props) {
 
   return (
     <div className='formLogin'>
-      <div className='logo'></div>
+      <div className='logo'><img src={logo} alt=""/></div>
       <form onSubmit={e => signIn(e)}>
         <span className='validacao'>{emailError}</span>
         <input id="emailLogin" onChange={(e) => validarEmail(e, setEmailError)} type="email" placeholder='Email' />
