@@ -1,14 +1,14 @@
 import nophoto from '../img/nophoto.png';
-import { toFormatedDate } from '../modelos';
+import { toFormattedDate } from '../models';
 
 export function Profile(props) {
-  const user = props.user;
+  const profile = props.profile;
 
-  const createdAt = toFormatedDate(user.createdAt);
-  const lastLoginAt = toFormatedDate(user.lastLoginAt);
+  const createdAt = toFormattedDate(profile.createdAt);
+  const lastLoginAt = toFormattedDate(profile.lastLoginAt);
 
-  function fechar(e) {
-    props.setPerfil(null);
+  function close(e) {
+    props.setProfile(null);
   }
 
   function editPhoto(e) {
@@ -20,16 +20,16 @@ export function Profile(props) {
   return (
     <div className="modal">
       <div className="profile dialog">
-        <div className='profilePhoto'>
-          <span className='profileEditPhoto' onClick={e => editPhoto(e)}>Alterar</span>
-          <img src={user.photoURL || nophoto} alt=""/>
+        <div className='profile-photo'>
+          <span className='profile-edit-photo' onClick={e => editPhoto(e)}>Alterar</span>
+          <img src={profile.photoURL || nophoto} alt=""/>
         </div>
-        <h3>{user.displayName}</h3>
-        <p>{user.email}</p>
-        <p>Tel: {user.phoneNumber || 'não informado'}</p>
+        <h3>{profile.displayName}</h3>
+        <p>{profile.email}</p>
+        <p>Tel: {profile.phoneNumber || 'não informado'}</p>
         <p>Desde {createdAt}</p>
         <p>Ultimo login: {lastLoginAt}</p>
-        <button className="botao" onClick={e => fechar(e)}>Fechar</button>
+        <button className="btn" onClick={e => close(e)}>Fechar</button>
       </div>
     </div>
   );

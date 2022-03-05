@@ -1,7 +1,7 @@
 import validator from 'validator';
 
-export function validarEmail(elemento, setEmailError) {
-    const email = elemento.target.value;
+export function checkEmail(element, setEmailError) {
+    const email = element.target.value;
     setEmailError(null);
     if (!email)
       return;

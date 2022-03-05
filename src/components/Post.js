@@ -12,26 +12,26 @@ import {
   subscribeToLikes
 } from '../data/db';
 
-import { DlgApagar } from './ConfirmDlg';
-import { Comentario } from './Comentario';
+import { DlgConfirmDelete } from './ConfirmDlg';
+import { Comment } from './Comment';
 import '../index';
 import { Profile } from './Profile';
 import nophoto from '../img/nophoto.png';
 
 export function Post(props) {
   const likedClass = 'fa fa-heart-o material-icons f25';
-  const notlikedClass = 'fa fa-heart material-icons f25';
+  const notLikedClass = 'fa fa-heart material-icons f25';
   const post = props.post;
   const user = getAuth(app).currentUser;
-  const [comentarios, setComentarios] = useState([]);
-  const [dlgApagar, setDlgApagar] = useState(null);
-  const [perfil, setPerfil] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [dlgDelete, setDlgDelete] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [showingProfile, setShowingProfile] = useState(false);
   const [like, setLike] = useState(null);
   const [likes, setLikes] = useState([]);
 
   useEffect(() => {
-    subscribeToComments(post.id, setComentarios);
+    subscribeToComments(post.id, setComments);
     subscribeToLike(post.id, setLike);
     subscribeToLikes(post.id, setLikes);
     getUserProfile(post.user.id).then(p => setProfile(p));
@@ -39,50 +39,50 @@ export function Post(props) {
 
   async function newComment(id, e) {
     e.preventDefault?.();
-    const comentario = document.getElementById(`comentario-post-${id}`);
+    const comment = document.getElementById(`comment-${id}`);
 
-    if (!comentario.value)
+    if (!comment.value)
     {
       alert('Não pode ser vazio');
       return;
     }
 
     try {
-      await addComment(id, comentario.value);
-      comentario.value = '';
+      await addComment(id, comment.value);
+      comment.value = '';
     } catch (error) {
       alert(error.message)
     }
   }
 
-  async function apagarPost(e, id) {
+  async function removePost(e, id) {
     e.preventDefault();
 
     console.log('Apagando post ' + id);
     try {
       await deletePost(id);
-      setDlgApagar(null);
+      setDlgDelete(null);
     } catch (error) {
       console.error(error);
       alert(error.message);
     }
   }
 
-  function fecharDlg(e) {
+  function closeDialog(e) {
     e.preventDefault();
-    setDlgApagar(null);
+    setDlgDelete(null);
   }
 
   function confirmDeletePost(e) {
     e.preventDefault();
-    setDlgApagar(apagarPostDlg);
+    setDlgDelete(deletePostDlg);
   }
 
-  const apagarPostDlg = {
+  const deletePostDlg = {
     msg: "Essa operação não pode ser desfeita, continuar?",
-    titulo: "Apagar a postagem",
-    sim: e => apagarPost(e, post.id),
-    nao: e => fecharDlg(e),
+    title: "Apagar a postagem",
+    confirm: e => removePost(e, post.id),
+    cancel: e => closeDialog(e),
     style: {display: 'block'}
   }
 
@@ -91,7 +91,8 @@ export function Post(props) {
 
     try {
       const profile = await getUserProfile(uid);
-      setPerfil(profile);
+      setProfile(profile);
+      setShowingProfile(true);
     } catch (error) {
       console.error(error.message);
       alert(error.message);
@@ -134,34 +135,34 @@ export function Post(props) {
   }
 
   return (
-    <div className="publicacao" id={post.id}>
-      <div className='postHeader'>
-        <img className='postPerfilPhoto' src={profile?.photoURL || nophoto} alt=""></img>
+    <div className="post" id={post.id}>
+      <div className='header-post'>
+        <img className='profile-photo-small' src={profile?.photoURL || nophoto} alt=""></img>
         <p><span className='user-name' onClick={e => showProfile(e, post.user.id)}> {post.user.name}</span> - {post.when()}</p>
-        <button className={`btnExcluirPost ${hidden} material-icons light`} onClick={e => confirmDeletePost(e)}>delete</button>
+        {!hidden && <button className={`btn-delete-post material-icons light`} onClick={e => confirmDeletePost(e)}>delete</button>}
       </div>
       <div className='photo'>
         <img src={post.image.url} alt="" onDoubleClick={e => toggleLike(e, post.id)}/>
-        <span className={'material-icons photoLike ' + (like ? 'like-o' : '')} onDoubleClick={e => toggleLike(e, post.id)}>favorite</span>
+        <span className={'material-icons like-heart-post ' + (like ? 'like-o' : '')} onDoubleClick={e => toggleLike(e, post.id)}>favorite</span>
       </div>
-      <p className='postado-por'><span id={`heart${post.id}`} className='div-like'>
-        <b onClick={e => toggleLike(e, post.id)} className={like ? likedClass : notlikedClass} >
+      <p className='posted-by'><span id={`heart${post.id}`} className='div-like'>
+        <b onClick={e => toggleLike(e, post.id)} className={like ? likedClass : notLikedClass} >
           favorite
-        </b><span className='postLikes'>{getLikes()}</span>
+        </b><span className='post-likes'>{getLikes()}</span>
       </span>
       </p>
-      <p className='publicacao-descr'>{post.description}</p>
+      <p className='post-description'>{post.description}</p>
       <div className='comments'>
         {
-          comentarios.map(comment => <Comentario key={comment.id} comment={comment} postId={post.id}/>)
+          comments.map(comment => <Comment key={comment.id} comment={comment} postId={post.id}/>)
         }
       </div>
-      <form className='form-comentario' id={`comentario-form-${post.id}`} onSubmit={e => newComment(post.id, e)}>
-        <textarea id={`comentario-post-${post.id}`} placeholder="Adicione um comentário..." ></textarea>
+      <form className='form-add-comment' id={`form-add-comment-${post.id}`} onSubmit={e => newComment(post.id, e)}>
+        <textarea id={`comment-${post.id}`} placeholder="Adicione um comentário..." ></textarea>
         <input type="submit" value="Publicar" />
       </form>
-      <DlgApagar {...dlgApagar} />
-      {perfil && <Profile user={perfil} setPerfil={setPerfil} />}
+      <DlgConfirmDelete {...dlgDelete} />
+      {showingProfile && <Profile profile={profile} setProfile={setProfile} />}
     </div>
   )
 }

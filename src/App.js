@@ -1,7 +1,7 @@
 import './App.css';
 import Header from './components/Header'
 import Login from './components/Login'
-import Cadastro from './components/Cadastro'
+import SignUp from './components/SignUp'
 import { Post } from './components/Post';
 import { FormUpload } from './components/FormUpload';
 import { useState, useEffect } from 'react'
@@ -29,7 +29,7 @@ function App() {
     <div className="App">
       <Header user={user} setUser={setUser} setNovoPost={setNovoPost}></Header>
       {(!user) && <Login user={user} setUser={setUser} />}
-      {(!user) && <Cadastro user={user} setUser={setUser} />}
+      {(!user) && <SignUp user={user} setUser={setUser} />}
       {user && novoPost && <FormUpload user={user} novoPost={novoPost} setNovoPost={setNovoPost} />}
       {user && posts.map(post => <Post key={post.id} post={post} id={post.id} ></Post>) }
     </div>

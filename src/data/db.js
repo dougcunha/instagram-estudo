@@ -28,7 +28,7 @@ import {
   PostModel,
   ProfileModel,
   UserModel
-} from '../modelos.js';
+} from '../models.js';
 
 export async function createUser(email, password, displayName) {
   try {
@@ -131,7 +131,7 @@ export async function getUserProfile(userId) {
   return ProfileModel.fromJson(user).toObject();
 }
 
-function uuidv4() {
+function getNewUuid() {
   return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
     // eslint-disable-next-line
     (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
@@ -139,8 +139,8 @@ function uuidv4() {
 }
 
 export function sendFile(file, onProgress, onSuccess, onError) {
-  const tipo = file.name.split('.').pop();
-  const fileId = `${uuidv4()}.${tipo}`;
+  const type = file.name.split('.').pop();
+  const fileId = `${getNewUuid()}.${type}`;
   const storage = getStorage(app);
   const fileRef = ref(storage, `images/${fileId}`);
   const task = uploadBytesResumable(fileRef, file);

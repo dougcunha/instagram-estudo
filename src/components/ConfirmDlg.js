@@ -1,35 +1,35 @@
-import alerta from '../img/alerta.png';
+import alert from '../img/alert.png';
 
-export function DlgApagar(props) {
+export function DlgConfirmDelete(props) {
   return (
-    <ConfirmDlg tipo='alerta' simTxt="Apagar" naoTxt="Cancelar" {...props}/>
+    <ConfirmDlg type='alerta' confirmText="Apagar" cancelText="Cancelar" {...props}/>
   );
 }
 
 export function ConfirmDlg(props) {
   const question = props.msg;
-  const sim = props.sim;
-  const nao = props.nao;
-  const simTxt = props.simTxt || "Sim";
-  const naoTxt = props.naoTxt || "Não";
-  const titulo = props.titulo || "Confirmação";
-  const tipo = props.tipo;
+  const confirm = props.confirm;
+  const cancel = props.cancel;
+  const confirmText = props.confirmText || "Sim";
+  const cancelText = props.cancelText || "Não";
+  const title = props.title || "Confirmação";
+  const type = props.type;
 
-  function getIcone() {
-    return tipo === 'alerta' ? alerta : null;
+  function getIcon() {
+    return type === 'alert' ? alert : null;
   }
 
   return (
     <div className='modal' style={props.style || {display: 'none'}}>
       <div className="dialog confirm-dlg">
-        <p className="dlg-titulo">{titulo}</p>
+        <p className="dlg-title">{title}</p>
         <div className="dlg-msg">
-          <img className='dlg-icone' src={getIcone()} alt="" />
+          <img className='dlg-icon' src={getIcon()} alt="" />
           <p>{question}</p>
         </div>
-        <div className="dlg-botoes">
-          <button className="nao" onClick={e => nao(e)}>{naoTxt}</button>
-          <button className="sim" onClick={e => sim(e)}>{simTxt}</button>
+        <div className="dlg-form-buttons">
+          <button className="btn-cancel" onClick={e => cancel(e)}>{cancelText}</button>
+          <button className="btn-confirm" onClick={e => confirm(e)}>{confirmText}</button>
         </div>
       </div>
     </div>

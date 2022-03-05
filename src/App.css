@@ -21,14 +21,14 @@ body {
   background-color: white;
 }
 
-.logado {
+.logged {
   padding: 15px 0 0 15px;
   padding-right: 15px;
 }
 
-button.novo-post,
+button.btn-new-post,
 button.logoff,
-.botao {
+.btn {
   color: white;
   background-color: #0095f6;
   border: 0;
@@ -40,7 +40,7 @@ button.logoff,
   border-radius: 4px;
 }
 
-.headerLogo {
+.header-logo {
   padding: 15px 0 0 15px;
 }
 
@@ -49,14 +49,14 @@ button.logoff,
   cursor: pointer;
 }
 
-.headerLogoImg > img {
+.header-logo-img > img {
   height: 40px;
   width: 150px;
   object-fit: contain;
   cursor: pointer;
 }
 
-.formLogin {
+.form-login {
   border-radius: 4px;
   position: absolute;
   left: 50%;
@@ -75,8 +75,8 @@ button.logoff,
   object-fit: contain;
 }
 
-.formLogin input[type=email],
-.formLogin input[type=password] {
+.form-login input[type=email],
+.form-login input[type=password] {
   width: 100%;
   height: 30px;
   margin-bottom: 10px;
@@ -85,7 +85,7 @@ button.logoff,
   border-radius: 4px;
 }
 
-.formLogin input[type=submit] {
+.form-login input[type=submit] {
   background-color: #0095f6;
   color: white;
   border: 0;
@@ -97,13 +97,13 @@ button.logoff,
   width: 100%;
 }
 
-.validacao {
+.validation {
   font-size: 12px;
   color: red;
   font-weight: bold;
 }
 
-.formCadastro {
+.form-new-user {
   border-radius: 4px;
   display: none;
   position: absolute;
@@ -117,13 +117,13 @@ button.logoff,
   text-align: center;
 }
 
-.formCadastro h2 {
+.form-new-user h2 {
   color: rgb(142, 142, 142);
   font-size: 17px;
   padding-bottom: 15px;
 }
 
-.formCadastro input {
+.form-new-user input {
   width: 100%;
   height: 30px;
   margin-bottom: 10px;
@@ -132,7 +132,7 @@ button.logoff,
   border-radius: 4px;
 }
 
-.formCadastro input[type=submit] {
+.form-new-user input[type=submit] {
   width: 100%;
   height: 30px;
   margin-bottom: 10px;
@@ -150,13 +150,13 @@ input[type=submit]:disabled {
   border-color: rgba(0, 0, 0, 0);
 }
 
-.regrasCadastro {
+.rules-new-user {
   font-size: 12px;
   color: rgb(142, 142, 142);
   text-align: center;
 }
 
-.modalUpload {
+.modal-upload {
   display: block;
   position: fixed;
   left: 0;
@@ -164,9 +164,10 @@ input[type=submit]:disabled {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.2);
+  z-index: 999;
 }
 
-.formUpload {
+.form-upload {
   border-radius: 4px;
   position: absolute;
   left: 50%;
@@ -179,7 +180,7 @@ input[type=submit]:disabled {
   text-align: center;
 }
 
-.fechar {
+.close {
   position: absolute;
   right: -10px;
   top: -10px;
@@ -193,7 +194,7 @@ input[type=submit]:disabled {
   background-color: #0095f6;
 }
 
-.formUpload textarea {
+.form-upload textarea {
   width: 100%;
   margin-bottom: 10px;
   padding-left: 10px;
@@ -205,13 +206,13 @@ input[type=submit]:disabled {
   resize: none;
 }
 
-.formUpload h2 {
+.form-upload h2 {
   color: rgb(142, 142, 142);
   font-size: 22px;
   padding-bottom: 15px;
 }
 
-.formUpload input {
+.form-upload input {
   font-size: 16px;
   font-weight: 700;
   width: 100%;
@@ -225,7 +226,7 @@ input[type=submit]:disabled {
   color: white;
 }
 
-.formUpload input[type=submit]:disabled {
+.form-upload input[type=submit]:disabled {
   color: white;
   background-color: rgba(0, 149, 246, 0.3);
   border-color: rgba(0, 0, 0, 0);
@@ -233,10 +234,6 @@ input[type=submit]:disabled {
 
 .upload-box-file:hover+label strong {
   color: #0095f6;
-}
-
-.progresso {
-  display: none;
 }
 
 .upload-box-uploading,
@@ -309,42 +306,41 @@ svg {
   padding: 0;
 }
 
-.oculto,
 .hidden {
   display: none;
 }
 
-.publicacao {
+.post {
   background-color: white;
   max-width: 700px;
   margin: 10px auto;
   border-radius: 4px;
 }
 
-.postHeader {
+.header-post {
   display: flex;
   justify-content: space-between;
   padding: 15px;
 }
 
-.postHeader p {
+.header-post p {
   width: 100%;
   text-align: left;
 }
 
-.postPerfilPhoto {
+.profile-photo-small {
   border-radius: 50%;
   margin-right: 15px;
   width: 35px;
   height: 35px;
 }
 
-.postLikes {
+.post-likes {
   margin-left: 10px;
   vertical-align: top;
 }
 
-.btnExcluirPost {
+.btn-delete-post {
   width: 60px;
   height: 30px;
   margin-left: 10px;
@@ -363,13 +359,13 @@ svg {
   color: white;
 }
 
-.publicacao .photo > img {
+.post .photo > img {
   width: 100%;
   object-fit: contain;
   max-height: 500px;
 }
 
-.publicacao .photo .photoLike {
+.post .photo .like-heart-post {
   font-size: 60px;
   position: absolute;
   top: 50%;
@@ -384,10 +380,10 @@ svg {
 }
 
 .like-o {
-  animation: likeHeartAnimation 500ms linear;
+  animation: like-heart-post-animation 500ms linear;
 }
 
-@keyframes likeHeartAnimation {
+@keyframes like-heart-post-animation {
 
   0%,
   to {
@@ -421,12 +417,12 @@ svg {
   }
 }
 
-.publicacao>p {
+.post > p {
   padding-top: 10px;
   padding-left: 15px;
 }
 
-.publicacao textarea {
+.post textarea {
   width: 100%;
   height: 40px;
   border: 0;
@@ -435,21 +431,21 @@ svg {
   resize: none;
 }
 
-.publicacao textarea:focus {
+.post textarea:focus {
   outline: none;
 }
 
-.publicacao-descr {
+.post-description {
   margin-bottom: 10px;
 }
 
-form.form-comentario {
+form.form-add-comment {
   border-top: #dcdcdc solid 1px;
   display: flex;
   padding: 5px;
 }
 
-.publicacao input[type=submit] {
+.post input[type=submit] {
   background-color: white;
   cursor: pointer;
   color: #0095f6;
@@ -483,7 +479,7 @@ form.form-comentario {
   max-width: 500px;
 }
 
-div.dialog p.dlg-titulo {
+div.dialog p.dlg-title {
   font-size: 16px;
   font-weight: 700;
   text-align: left;
@@ -506,7 +502,7 @@ div.dlg-msg {
   text-align: left;
 }
 
-img.dlg-icone {
+img.dlg-icon {
   width: 30px;
   height: 30px;
   object-fit: contain;
@@ -527,19 +523,19 @@ div.dialog button {
   color: white;
 }
 
-div.dialog button.sim {
+div.dialog button.btn-confirm {
   padding-left: 10px;
   padding-right: 10px;
   margin-left: 8px;
   background-color: #e23642
 }
 
-div.dialog button.nao {
+div.dialog button.btn-cancel {
   background-color: white;
   color: #828282;
 }
 
-.dlg-botoes {
+.dlg-form-buttons {
   position: absolute;
   bottom: 0;
   right: 0;
@@ -571,7 +567,7 @@ div.dialog button.nao {
   margin-right: 15px;
 }
 
-.comments>hr {
+.comments > hr {
   background-color: #0095f6;
   border: 10px solid #0095f6;
 }
@@ -582,7 +578,7 @@ div.dialog button.nao {
   margin-bottom: 5px;
 }
 
-.comment-apagar {
+.btn-delete-comment {
   margin-left: 15px;
   font-weight: 700;
   background-color: white;
@@ -592,11 +588,11 @@ div.dialog button.nao {
   font-size: x-small;
 }
 
-.comment-msg {
+.comment-message {
   margin-left: 5px;
 }
 
-.comment-user {
+.comment-user-name {
   font-weight: 700;
 }
 
@@ -606,7 +602,7 @@ div.dialog button.nao {
   cursor: pointer;
 }
 
-.comment-data {
+.comment-when {
   margin-left: 5px;
   font-size: small;
   font-style: italic;
@@ -637,19 +633,19 @@ button.btn-link {
   text-align: center;
 }
 
-.profilePhoto {
+.profile-photo {
   position: relative;
   text-align: center;
 }
 
-.profilePhoto > img {
+.profile-photo > img {
   width: 220px;
   height: 220px;
   border-radius: 50%;
   cursor: pointer;
 }
 
-.profileEditPhoto {
+.profile-edit-photo {
   padding: 80px;
   font-size: large;
   color: #ccc;
@@ -661,7 +657,7 @@ button.btn-link {
   cursor: pointer;
 }
 
-.profileEditPhoto:hover {
+.profile-edit-photo:hover {
   opacity: 1;
 }
 

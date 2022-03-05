@@ -1,24 +1,31 @@
-import { app, getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from '../firebase';
+import {
+  app,
+  getAuth,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail
+} from '../firebase';
+
 import { useState } from 'react';
-import { validarEmail } from '../validacoes';
+import { checkEmail } from '../validations';
 import validator from 'validator';
 import logo from '../img/instagrado.png';
 
 function Login(props) {
   const [emailError, setEmailError] = useState('')
-  function mostrarCadastro(e) {
+  function showModalNewUser(e) {
       e.preventDefault();
-      const cadastro = document.getElementById('formCadastro');
-      cadastro.style.display = 'block';
+      const formNewUser = document.getElementById('form-new-user');
+      formNewUser.style.display = 'block';
   }
+
+  const getEmail = () => document.getElementById('email-login').value;
+  const getPassword = () => document.getElementById('txt-password').value;
 
   async function signIn(e) {
       e.preventDefault();
-      const email = document.getElementById('emailLogin').value;
-      const senha = document.getElementById('senhaLogin').value;
 
       try {
-        const auth = await signInWithEmailAndPassword(getAuth(app), email, senha);
+        const auth = await signInWithEmailAndPassword(getAuth(app), getEmail(), getPassword());
         props.setUser(auth.user.displayName);
       } catch (error) {
         console.error(error);
@@ -26,18 +33,15 @@ function Login(props) {
       }
   }
 
-  const getEmail = () => document.getElementById('emailLogin').value;
-  const getSenha = () => document.getElementById('senhaLogin').value;
-
-  function ativarBotaoEntrar(e) {
+  function enableBtnLogin(e) {
     const ok = validator.isEmail(getEmail())
-      && validator.isLength(getSenha(), {min: 5, max: 30});
+      && validator.isLength(getPassword(), {min: 5, max: 30});
 
-    const botao = document.getElementById('btn-entrar');
-    botao.disabled = !ok;
+    const btn = document.getElementById('btn-login');
+    btn.disabled = !ok;
   }
 
-  async function resetarSenha(e) {
+  async function resetPassword(e) {
     e.preventDefault();
     const email = getEmail();
     if (!validator.isEmail(email)) {
@@ -56,15 +60,15 @@ function Login(props) {
   }
 
   return (
-    <div className='formLogin'>
+    <div className='form-login'>
       <div className='logo'><img src={logo} alt=""/></div>
       <form onSubmit={e => signIn(e)}>
-        <span className='validacao'>{emailError}</span>
-        <input id="emailLogin" onChange={(e) => validarEmail(e, setEmailError)} type="email" placeholder='Email' />
-        <input id="senhaLogin" onChange={e => ativarBotaoEntrar(e)} type="password" placeholder='Senha' />
-        <input id="btn-entrar" type="submit" name="acao" value="Entrar" disabled/>
-        <button id="btnCriarConta" className='btnCriarConta btn-link' onClick={e => mostrarCadastro(e) }>Criar conta</button>
-        <button id="btnResetarSenha" className='btnEsqueciSenha btn-link' onClick={e => resetarSenha(e)}>Esqueci a senha</button>
+        <span className='validation'>{emailError}</span>
+        <input id="email-login" onChange={(e) => checkEmail(e, setEmailError)} type="email" placeholder='Email' />
+        <input id="txt-password" onChange={e => enableBtnLogin(e)} type="password" placeholder='Senha' />
+        <input id="btn-login" type="submit" name="btn-login" value="Entrar" disabled/>
+        <button id="btn-new-account" className='btn-new-account btn-link' onClick={e => showModalNewUser(e) }>Criar conta</button>
+        <button id="btn-reset-password" className='btn-forgot-password btn-link' onClick={e => resetPassword(e)}>Esqueci a senha</button>
       </form>
     </div>
   )
