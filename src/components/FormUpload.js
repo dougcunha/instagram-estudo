@@ -27,6 +27,12 @@ export function FormUpload(props) {
     props.setNovoPost(false);
   }
 
+  function showEmojis(e) {
+    e.preventDefault();
+
+    alert('Emojis');
+  }
+
   return  (
       (props.novoPost) && <div className="modal-upload">
         <div className="form-upload">
@@ -35,8 +41,11 @@ export function FormUpload(props) {
           <h2>Criar nova publicação</h2>
           <form id="form-upload" onSubmit={e => sendPost(e)}>
               <UploadBox {...props} setFile={setFile}></UploadBox>
-              <textarea id="post-description" type="text" placeholder="Descrição"/>
-              <input type="submit" value="Publicar" disabled={file ? false : true}/>
+              <div className='textarea-upload-description'>
+                <button className='btn-emoji-list material-icons-outlined' onClick={e => showEmojis(e)}>emoji_emotions</button>
+                <textarea id="post-description" type="text" placeholder="Descrição"/>
+                <input type="submit" value="Publicar" disabled={file ? false : true}/>
+              </div>
           </form>
         </div>
       </div>

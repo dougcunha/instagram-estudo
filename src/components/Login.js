@@ -26,7 +26,7 @@ function Login(props) {
 
       try {
         const auth = await signInWithEmailAndPassword(getAuth(app), getEmail(), getPassword());
-        props.setUser(auth.user.displayName);
+        props.setUser(auth.user.displayName ?? getEmail());
       } catch (error) {
         console.error(error);
         alert(error.message);

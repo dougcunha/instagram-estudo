@@ -63,7 +63,7 @@ export function Comment(props) {
       <span className='comment-when'> - {comment.when()}</span>
       {!hidden && <button className='btn-delete-comment' onClick={e => confirmDeleteComment(e, comment.id)}>Apagar</button>}
       <DlgConfirmDelete {...dlgDelete} />
-      {profile && <Profile profile={profile} setProfile={setProfile} />}
+      {profile && <Profile userProfile={profile} setProfile={setProfile} />}
     </div>
   )
 }

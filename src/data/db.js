@@ -4,6 +4,7 @@ import {
   getFirestore,
   deleteObject,
   getStorage,
+  setDoc,
   doc,
   ref,
   uploadBytesResumable,
@@ -40,22 +41,49 @@ export async function createUser(email, password, displayName) {
   }
 }
 
+/**
+ *  Create an user profile.
+ * @export addProfile
+ * @param {*} user the current user from _getAuth(app).currentUser_;
+ * @param {*} email the user email or null to use the current email.
+ * @param {*} displayName the display name or null to use the current display name.
+ * @param {*} photoURL the photo URL or null to use the current photo URL.
+ */
 export async function addProfile(user, email, displayName, photoURL) {
   try {
-    await updateProfile(user, {
-      displayName: displayName,
-      photoURL: photoURL
-    });
+    if (displayName || photoURL)
+      await updateProfile(user, {
+        displayName: displayName ?? user.displayName,
+        photoURL: photoURL ?? user.photoURL
+      });
 
     const profile = new ProfileModel(
+      null,
       user.uid,
-      displayName,
-      email,
+      displayName ?? user.displayName,
+      email ?? user.email,
       '',
-      ''
+      photoURL ?? user.photoURL ?? ''
     );
 
-    await addDoc(collection(getFirestore(app), 'profiles'), profile.toSave());
+    return await addDoc(collection(getFirestore(app), 'profiles'), profile.toSave());
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function updProfile(user, profile) {
+  try {
+    const data = ProfileModel.fromJson(profile.id, profile).toSave();
+
+    await updateProfile(user, {
+      displayName: profile.displayName,
+      photoURL: profile.photoURL
+    });
+
+    const docRef = doc(getFirestore(app), 'profiles', profile.id);
+    await setDoc(docRef, data);
   } catch (error) {
     console.error(error);
     throw error;
@@ -114,7 +142,7 @@ export async function deletePost(postId) {
   await deleteFromStorage(imgId);
 }
 
-export async function getUserProfile(userId) {
+export async function getUserProfile(userId, createIfNotExists=false) {
   const postsRef = collection(getFirestore(app), 'profiles')
   const q = query(postsRef, where('uid', '==', userId));
   const snap = await getDocs(q);
@@ -122,13 +150,17 @@ export async function getUserProfile(userId) {
   if (snap.docs.length === 0)
   {
     console.log('Não achou o perfil ' + userId);
+    if (!createIfNotExists)
+      return;
 
-    return;
+    const doc = await addProfile(getAuth(app).currentUser);
+    const snap = await getDocs(q);
+    return ProfileModel.fromJson(doc.id, snap.docs[0].data()).toObject();
   }
 
-  const user = snap.docs[0].data();
+  const doc = snap.docs[0];
 
-  return ProfileModel.fromJson(user).toObject();
+  return ProfileModel.fromJson(doc.id, doc.data()).toObject();
 }
 
 function getNewUuid() {
@@ -138,17 +170,17 @@ function getNewUuid() {
   );
 }
 
-export function sendFile(file, onProgress, onSuccess, onError) {
-  const type = file.name.split('.').pop();
-  const fileId = `${getNewUuid()}.${type}`;
+export function sendFile(file, onProgress, onSuccess, onError, path='images', filename=null) {
+  const type = file?.name?.split('.').pop();
+  const fileId = filename ?? `${filename || getNewUuid()}.${type}`;
   const storage = getStorage(app);
-  const fileRef = ref(storage, `images/${fileId}`);
+  const fileRef = ref(storage, `${path}/${fileId}`);
   const task = uploadBytesResumable(fileRef, file);
 
   task
     .on("stage_changed",
-      snap => onProgress(Math.round((snap.bytesTransferred / snap.totalBytes) * 100)),
-      error => onError(error),
+      snap => onProgress?.(Math.round((snap.bytesTransferred / snap.totalBytes) * 100)),
+      error => onError?.(error),
       () => {
         getDownloadURL(task.snapshot.ref)
           .then(url => onSuccess(url, fileId))

@@ -359,8 +359,9 @@ export class ProfileModel extends ModelBase {
    * @param {TimeStamp} lastLoginAt the last time the user was logged in.
    * @memberof ProfileModel
    */
-  constructor(uid, displayName, email, phone, photoURL, createdAt, lastLoginAt) {
+  constructor(id, uid, displayName, email, phone, photoURL, createdAt, lastLoginAt) {
     super();
+    this.id = id;
     this.uid = uid;
     this.displayName = displayName;
     this.email = email;
@@ -371,14 +372,23 @@ export class ProfileModel extends ModelBase {
   }
 
   /**
+   * Returns a _UserModel_ from this _ProfileModel_.
+   * @returns an _UserModel_.
+   */
+  toUser() {
+    return new UserModel(this.uid, this.displayName);
+  }
+
+  /**
    * Creates an instance of _ProfileModel_ from an _Object_.
    * @static
-   * @param {Object} value { uid: _String_, displayName: _String_, email: _String_, phoneNumber: _String_, photoURL: _String_, createdAt: _Timestamp_, lastLoginAt: _Timestamp_ }
+   * @param {Object} value { id: _String_, uid: _String_, displayName: _String_, email: _String_, phoneNumber: _String_, photoURL: _String_, createdAt: _Timestamp_, lastLoginAt: _Timestamp_ }
    * @return {ProfileModel} an instance of _ProfileModel_.
    * @memberof ProfileModel
    */
-  static fromJson(value) {
+  static fromJson(id, value) {
     return new ProfileModel(
+      id,
       value.uid,
       value.displayName,
       value.email,
@@ -398,10 +408,10 @@ export class ProfileModel extends ModelBase {
   toSave() {
     return {
       uid: this.uid,
-      displayName: this.displayName,
+      displayName: this.displayName ?? this.email,
       email: this.email,
       phoneNumber: this.phoneNumber,
-      photoURL: this.photoUrl,
+      photoURL: this.photoURL,
       createdAt: serverTimestamp(),
       lastLoginAt: serverTimestamp()
     }

@@ -2,7 +2,7 @@ import alert from '../img/alert.png';
 
 export function DlgConfirmDelete(props) {
   return (
-    <ConfirmDlg type='alerta' confirmText="Apagar" cancelText="Cancelar" {...props}/>
+    <ConfirmDlg type='alert' confirmText="Apagar" cancelText="Cancelar" {...props}/>
   );
 }
 

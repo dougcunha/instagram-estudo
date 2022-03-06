@@ -2,36 +2,37 @@ import Logo from './Logo';
 import { app, getAuth } from '../firebase';
 import { useState } from 'react'
 import { Profile } from './Profile';
-import { getUserProfile } from '../data/db';
+import nophoto from '../img/nophoto.png';
 
-function Logado(props) {
-  const [perfil, setPerfil] = useState(null);
+function LoggedIn(props) {
+  const userProfile = props.userProfile;
+  const [profile, setProfile] = useState(null);
 
-  async function sair(e) {
+  async function logoff(e) {
     e.preventDefault();
     await getAuth(app).signOut();
     props.setUser(null);
     window.location.href = "/";
   }
 
-  function abrirNovoPost(e) {
+  function openNewPost(e) {
     e.preventDefault();
 
-    props.setNovoPost(true);
+    props.setNewPost(true);
   }
 
-  async function verPerfil(e) {
+  function showProfile(e) {
     e.preventDefault();
-    const profile = await getUserProfile(getAuth(app).currentUser.uid);
-    setPerfil(profile);
+    const profile = userProfile;
+    setProfile(profile);
   }
 
   return (
-    <span className='logged'><span className={getAuth(app).currentUser.uid}></span>
-      {perfil && <Profile user={perfil} setPerfil={setPerfil} />}
-      Bem vindo <span className='user-name' onClick={e => verPerfil(e)}>{props.user}</span>
-      <button className='logoff' onClick={e => sair(e)}> Sair </button>
-      <button className='btn-new-post' onClick={e => abrirNovoPost(e)}>Publicar</button>
+    <span className='logged'>
+      {profile && <Profile userProfile={userProfile} setProfile={setProfile} />}
+      <span className='btn-new-post material-icons-outlined' onClick={e => openNewPost(e)}>add_box</span>
+      <span className='btn-logout material-icons-outlined' onClick={e => logoff(e)}>logout</span>
+      <img className='profile-photo-small right' onClick={e => showProfile(e)} src={userProfile?.photoURL || nophoto} alt=""></img>
     </span>
   )
 }
@@ -40,7 +41,7 @@ function Header(props) {
     return (
       <div className="header">
         <Logo></Logo>
-        {props.user && <Logado {...props}></Logado>}
+        {props.userProfile && <LoggedIn profile={props.userProfile} {...props}></LoggedIn>}
       </div>
     )
 }

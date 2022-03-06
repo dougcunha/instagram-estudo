@@ -19,8 +19,8 @@ import { Profile } from './Profile';
 import nophoto from '../img/nophoto.png';
 
 export function Post(props) {
-  const likedClass = 'fa fa-heart-o material-icons f25';
-  const notLikedClass = 'fa fa-heart material-icons f25';
+  const likedClass = 'fa fa-heart-o material-icons-outlined f25';
+  const notLikedClass = 'fa fa-heart material-icons-outlined f25';
   const post = props.post;
   const user = getAuth(app).currentUser;
   const [comments, setComments] = useState([]);
@@ -86,12 +86,10 @@ export function Post(props) {
     style: {display: 'block'}
   }
 
-  async function showProfile(e, uid) {
+  async function showProfile(e) {
     e.preventDefault();
 
     try {
-      const profile = await getUserProfile(uid);
-      setProfile(profile);
       setShowingProfile(true);
     } catch (error) {
       console.error(error.message);
@@ -99,9 +97,7 @@ export function Post(props) {
     }
   }
 
-  const hidden = user.uid !== post.user.id
-    ? 'hidden'
-    : '';
+  const hidden = user.uid !== post.user.id;
 
   async function toggleLike(e, postId) {
     e.preventDefault();
@@ -134,16 +130,22 @@ export function Post(props) {
     return <span>{likes.length} pessoas curtiram, incluindo <b>{str.join(', ')}</b></span>
   }
 
+  function showEmojis(e) {
+    e.preventDefault();
+
+    alert('Emojis');
+  }
+
   return (
     <div className="post" id={post.id}>
       <div className='header-post'>
-        <img className='profile-photo-small' src={profile?.photoURL || nophoto} alt=""></img>
-        <p><span className='user-name' onClick={e => showProfile(e, post.user.id)}> {post.user.name}</span> - {post.when()}</p>
-        {!hidden && <button className={`btn-delete-post material-icons light`} onClick={e => confirmDeletePost(e)}>delete</button>}
+        <img className='profile-photo-small left' onClick={e => showProfile(e)} src={profile?.photoURL || nophoto} alt=""></img>
+        <p><span className='user-name' onClick={e => showProfile(e, profile)}> {post.user.name}</span> - {post.when()}</p>
+        {!hidden && <button className='btn-delete-post' onClick={e => confirmDeletePost(e)}>Apagar</button>}
       </div>
       <div className='photo'>
         <img src={post.image.url} alt="" onDoubleClick={e => toggleLike(e, post.id)}/>
-        <span className={'material-icons like-heart-post ' + (like ? 'like-o' : '')} onDoubleClick={e => toggleLike(e, post.id)}>favorite</span>
+        <span className={'material-icons-outlined like-heart-post ' + (like ? 'like-o' : '')} onDoubleClick={e => toggleLike(e, post.id)}>favorite</span>
       </div>
       <p className='posted-by'><span id={`heart${post.id}`} className='div-like'>
         <b onClick={e => toggleLike(e, post.id)} className={like ? likedClass : notLikedClass} >
@@ -158,11 +160,12 @@ export function Post(props) {
         }
       </div>
       <form className='form-add-comment' id={`form-add-comment-${post.id}`} onSubmit={e => newComment(post.id, e)}>
+        <button className='btn-emoji-list material-icons-outlined' onClick={e => showEmojis(e)}>emoji_emotions</button>
         <textarea id={`comment-${post.id}`} placeholder="Adicione um comentário..." ></textarea>
         <input type="submit" value="Publicar" />
       </form>
       <DlgConfirmDelete {...dlgDelete} />
-      {showingProfile && <Profile profile={profile} setProfile={setProfile} />}
+      {showingProfile && <Profile userProfile={profile} setProfile={setShowingProfile} />}
     </div>
   )
 }

@@ -9,6 +9,8 @@ import {
     deleteDoc,
     getDoc,
     getDocs,
+    setDoc,
+    updateDoc,
     addDoc,
     query,
     where,
@@ -45,8 +47,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-getFirestore(app)
-
 export {
     app,
     getFirestore,
@@ -65,6 +65,8 @@ export {
     doc,
     getDoc,
     getDocs,
+    setDoc,
+    updateDoc,
     addDoc,
     collection,
     query,
