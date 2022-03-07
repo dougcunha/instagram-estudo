@@ -541,7 +541,8 @@ img {
   background-color: rgba(37, 37, 37, 0.9);
 }
 
-.confirm-dlg {
+.confirm-dlg,
+.message-dlg {
   border-radius: 4px;
   position: absolute;
   left: 50%;
@@ -563,6 +564,7 @@ div.dialog p.dlg-title {
 div.dlg-msg {
   font-size: 16px;
   font-weight: 500;
+  border-radius: 4px;
   color: #e23642;
   background-color: #fbe9e7;
   height: 140px;
@@ -577,14 +579,13 @@ div.dlg-msg {
   text-align: left;
 }
 
-img.dlg-icon {
+span.dlg-icon {
   width: 30px;
   height: 30px;
-  object-fit: contain;
   position: absolute;
   left: 0;
   margin-left: 30px;
-  margin-top: 15px;
+  margin-top: 6px;
 }
 
 div.dialog button {
@@ -603,6 +604,13 @@ div.dialog button.btn-confirm {
   padding-right: 10px;
   margin-left: 8px;
   background-color: #e23642
+}
+
+div.dialog button.btn-ok {
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-left: 8px;
+  background-color: #0095f6;
 }
 
 div.dialog button.btn-cancel {

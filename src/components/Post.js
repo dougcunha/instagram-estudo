@@ -12,19 +12,25 @@ import {
   subscribeToLikes
 } from '../data/db';
 
-import { DlgConfirmDelete } from './ConfirmDlg';
 import { Comment } from './Comment';
 import '../index';
 import { Profile } from './Profile';
 import nophoto from '../img/nophoto.png';
+import { useComponentBaseContext } from './WithDialog';
 
-export function Post(props) {
+function Post(props) {
+  const {
+    setAlertMessage,
+    setErrorMessage,
+    setInfoMessage,
+    setDlgDelete
+  } = useComponentBaseContext();
+
   const likedClass = 'fa fa-heart-o material-icons-outlined f25';
   const notLikedClass = 'fa fa-heart material-icons-outlined f25';
   const post = props.post;
   const user = getAuth(app).currentUser;
   const [comments, setComments] = useState([]);
-  const [dlgDelete, setDlgDelete] = useState(null);
   const [profile, setProfile] = useState(null);
   const [showingProfile, setShowingProfile] = useState(false);
   const [like, setLike] = useState(null);
@@ -43,7 +49,7 @@ export function Post(props) {
 
     if (!comment.value)
     {
-      alert('Não pode ser vazio');
+      setAlertMessage('Digite uma mensagem antes de enviar.');
       return;
     }
 
@@ -51,7 +57,7 @@ export function Post(props) {
       await addComment(id, comment.value);
       comment.value = '';
     } catch (error) {
-      alert(error.message)
+      setErrorMessage('Digite uma mensagem antes de enviar.');
     }
   }
 
@@ -64,7 +70,7 @@ export function Post(props) {
       setDlgDelete(null);
     } catch (error) {
       console.error(error);
-      alert(error.message);
+      setErrorMessage(error.message);
     }
   }
 
@@ -79,11 +85,10 @@ export function Post(props) {
   }
 
   const deletePostDlg = {
-    msg: "Essa operação não pode ser desfeita, continuar?",
-    title: "Apagar a postagem",
-    confirm: e => removePost(e, post.id),
-    cancel: e => closeDialog(e),
-    style: {display: 'block'}
+    message: "Essa operação não pode ser desfeita, continuar?",
+    title: "Apagar a publicação?",
+    onConfirm: e => removePost(e, post.id),
+    onCancel: e => closeDialog(e)
   }
 
   async function showProfile(e) {
@@ -93,7 +98,7 @@ export function Post(props) {
       setShowingProfile(true);
     } catch (error) {
       console.error(error.message);
-      alert(error.message);
+      setErrorMessage(error.message);
     }
   }
 
@@ -109,7 +114,7 @@ export function Post(props) {
         await deleteLike(like);
     } catch (error) {
       console.error(error);
-      alert(error.message);
+      setErrorMessage(error.message);
     }
   }
 
@@ -133,7 +138,10 @@ export function Post(props) {
   function showEmojis(e) {
     e.preventDefault();
 
-    alert('Emojis');
+    setInfoMessage(`
+      Ainda estamos implementando os Emojis.
+      No windows você pode chamar o diálogo padrão de emojis usando a tecla Win + .
+    `);
   }
 
   return (
@@ -164,8 +172,9 @@ export function Post(props) {
         <textarea id={`comment-${post.id}`} placeholder="Adicione um comentário..." ></textarea>
         <input type="submit" value="Publicar" />
       </form>
-      <DlgConfirmDelete {...dlgDelete} />
       {showingProfile && <Profile userProfile={profile} setProfile={setShowingProfile} />}
     </div>
   )
 }
+
+export default Post;

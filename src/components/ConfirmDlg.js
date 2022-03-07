@@ -1,30 +1,32 @@
-import alert from '../img/alert.png';
-
 export function DlgConfirmDelete(props) {
   return (
-    <ConfirmDlg type='alert' confirmText="Apagar" cancelText="Cancelar" {...props}/>
+    <ConfirmDlg
+      type='warning'
+      confirmText="Apagar"
+      cancelText="Cancelar"
+      message={props.message}
+      title={props.title}
+      onConfirm={props.onConfirm}
+      onCancel={props.onCancel}
+    />
   );
 }
 
 export function ConfirmDlg(props) {
-  const question = props.msg;
-  const confirm = props.confirm;
-  const cancel = props.cancel;
+  const question = props.message;
+  const confirm = props.onConfirm;
+  const cancel = props.onCancel;
   const confirmText = props.confirmText || "Sim";
   const cancelText = props.cancelText || "Não";
   const title = props.title || "Confirmação";
   const type = props.type;
 
-  function getIcon() {
-    return type === 'alert' ? alert : null;
-  }
-
   return (
-    <div className='modal' style={props.style || {display: 'none'}}>
+    <div className='modal'>
       <div className="dialog confirm-dlg">
         <p className="dlg-title">{title}</p>
         <div className="dlg-msg">
-          <img className='dlg-icon' src={getIcon()} alt="" />
+          <span className='dlg-icon material-icons-outlined'>{type}</span>
           <p>{question}</p>
         </div>
         <div className="dlg-form-buttons">

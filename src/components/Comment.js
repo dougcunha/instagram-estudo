@@ -1,12 +1,12 @@
-import { DlgConfirmDelete } from './ConfirmDlg';
 import { useState } from 'react'
 import { deleteComment, getUserProfile } from '../data/db';
 import { app, getAuth } from '../firebase';
 import { Profile } from './Profile';
+import { useComponentBaseContext } from './WithDialog';
 
 export function Comment(props) {
   const comment = props.comment;
-  const [dlgDelete, setDlgDelete] = useState(null);
+  const { setDlgDelete } = useComponentBaseContext();
   const [profile, setProfile] = useState(null);
 
   function confirmDeleteComment(e, id) {
@@ -35,11 +35,10 @@ export function Comment(props) {
   }
 
   const deleteCommentDlg = {
-    msg: "Essa operação não pode ser desfeita, continuar?",
+    message: "Essa operação não pode ser desfeita, continuar?",
     title: "Apagar o comentário?",
-    confirm: e => removeComment(e),
-    cancel: e => closeDialog(e),
-    style: {display: 'block'}
+    onConfirm: e => removeComment(e),
+    onCancel: e => closeDialog(e)
   }
 
   async function showProfile(e, uid) {
@@ -62,7 +61,6 @@ export function Comment(props) {
       <span className='comment-message'>disse: {comment.message}</span>
       <span className='comment-when'> - {comment.when()}</span>
       {!hidden && <button className='btn-delete-comment' onClick={e => confirmDeleteComment(e, comment.id)}>Apagar</button>}
-      <DlgConfirmDelete {...dlgDelete} />
       {profile && <Profile userProfile={profile} setProfile={setProfile} />}
     </div>
   )
