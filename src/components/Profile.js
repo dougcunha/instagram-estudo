@@ -47,24 +47,40 @@ export function Profile(props) {
     reader.readAsDataURL(file);
   }
 
-  function saveChanges(e) {
+  async function saveChanges(e) {
     e.preventDefault();
 
-    resizer?.result('blob').then(blob =>  {
-      sendFile(
-        blob,
-        null,
-        (url, _) => {
-          setFile(null);
-          profile.photoURL = url;
-          updProfile(getAuth(app).currentUser, profile)
-          close();
-        },
-        error => alert(error.message),
-        'profiles',
-        profile.uid
-      )
-    });
+    if (resizer)
+      resizer.result('blob').then(blob =>  {
+        sendFile(
+          blob,
+          null,
+          (url, _) => {
+            setFile(null);
+            profile.photoURL = url;
+            updProfile(getAuth(app).currentUser, profile)
+              .then(_ => close())
+              .catch(error => {
+                alert(error.message);
+                console.error(error);
+              });
+          },
+          error => {
+            alert(error.message);
+            console.error(error);
+          },
+          'profiles',
+          profile.uid
+        )
+      });
+    else
+    try {
+      await updProfile(getAuth(app).currentUser, profile);
+      close();
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
   }
 
   function configureImg(url) {
@@ -92,14 +108,46 @@ export function Profile(props) {
           {canEdit && <span className='profile-edit-photo' onClick={e => editPhoto(e)}>Alterar</span>}
           <img id='profile-img' src={profile.photoURL || nophoto} alt=""/>
         </div>
-        <h3>{profile.displayName}</h3>
-        <p>{profile.email}</p>
-        <p>Tel: {profile.phoneNumber || 'não informado'}</p>
-        <p>Desde {createdAt}</p>
-        <p>Ultimo login: {lastLoginAt}</p>
+        <div className='profile-info'>
+          <Item setValue={v => profile.email = v} id='txt-email' profile={profile} value={profile.email} label='Email:' type='email' readOnly={true}/>
+          <Item setValue={v => profile.displayName = v} id='txt-username' profile={profile} value={profile.displayName} label='User:'/>
+          <Item setValue={v => profile.phoneNumber = v} id='txt-phone' profile={profile} value={profile.phoneNumber} label='Tel:' type='tel'/>
+          <b className='txt-profile-sep'></b>
+          <p>Desde {createdAt}</p>
+          <p>Ultimo login: {lastLoginAt}</p>
+        </div>
         <button className="btn" onClick={e => close(e)}>Fechar</button>
-        {file && <button className="btn" onClick={e => saveChanges(e)}>Salvar</button>}
+        {(file || canEdit) && <button className="btn" onClick={e => saveChanges(e)}>Salvar</button>}
       </div>
+    </div>
+  );
+}
+
+function Item(props) {
+  const setValue = props.setValue;
+  const profile = props.profile;
+  const id = props.id;
+  const value = props.value;
+  const type = props.type ?? 'text';
+  const label = props.label;
+  const uid = getAuth(app).currentUser.uid;
+  const readOnly = props.readOnly || uid !== profile.uid;
+  const [canEdit, setCanEdit] = useState(props.canEdit && !props.readOnly);
+
+  function changed(e) {
+    setValue(e.target.value);
+  }
+
+  function edit(e) {
+    setCanEdit(true);
+  }
+
+  return (
+    <div className='profile-item'>
+      <label htmlFor={id}>{label}</label>
+      {!canEdit && <span id={`txt-${id}`}>{value}</span>}
+      {canEdit && <input type={type} id={id} name={id} placeholder={value} onChange={e => changed(e)}/>}
+      {!readOnly && !canEdit && <i className='btn-edit material-icons-outlined' onClick={e => edit(e)}>edit</i>}
     </div>
   );
 }
