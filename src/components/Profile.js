@@ -9,11 +9,17 @@ import 'croppie/croppie.css';
 
 export function Profile(props) {
   const profile = props.userProfile;
+  const show = props.show;
+  const [resizer, setResizer] = useState(null);
+  const [file, setFile] = useState(null);
+
+  if (!profile || !show)
+    return null;
+
   const canEdit = profile.uid === getAuth(app).currentUser.uid;
   const createdAt = toFormattedDate(profile.createdAt);
   const lastLoginAt = toFormattedDate(profile.lastLoginAt);
-  const [resizer, setResizer] = useState(null);
-  const [file, setFile] = useState(null);
+
 
   function close(e) {
     e?.preventDefault();
@@ -101,7 +107,7 @@ export function Profile(props) {
   }
 
   return (
-    <div className="modal">
+    show && <div className="modal">
       <div className="profile dialog">
         <input type="file" accept="image/*" onChange={e => showFile(e)} className="upload-box-file" id="file" />
         <div className='profile-photo' id='profile-photo'>

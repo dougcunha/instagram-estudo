@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { addPost } from '../data/db';
+import { BtnPublish } from './Controls';
 
 export function FormUpload(props) {
   const [progress, setProgress] = useState(0);
@@ -44,7 +45,7 @@ export function FormUpload(props) {
               <div className='textarea-upload-description'>
                 <button className='btn-emoji-list material-icons-outlined' onClick={e => showEmojis(e)}>emoji_emotions</button>
                 <textarea id="post-description" type="text" placeholder="Descrição"/>
-                <input type="submit" value="Publicar" disabled={file ? false : true}/>
+                <BtnPublish disabled={file ? false : true}/>
               </div>
           </form>
         </div>

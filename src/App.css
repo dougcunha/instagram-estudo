@@ -396,7 +396,6 @@ svg {
 }
 
 .post-likes {
-  margin-left: 10px;
   vertical-align: top;
 }
 
@@ -479,7 +478,7 @@ svg {
 
 .post > p {
   padding-top: 10px;
-  padding-left: 15px;
+  padding-left: 10px;
 }
 
 .post textarea {
@@ -512,6 +511,13 @@ form.form-add-comment {
   border: 0;
   padding: 8px 10px;
   font-weight: 700;
+}
+
+.post input[type=submit]:disabled {
+  background-color: white;
+  color: rgba(0, 149, 246, 0.3);
+  border-color: rgba(0, 0, 0, 0);
+  cursor: default;
 }
 
 img {
@@ -745,10 +751,12 @@ button.btn-link {
 
 .fa {
   font-size: 22px;
+  margin-right: 5px;
 }
 
 .div-like {
   padding-right: 5px;
+  margin-left: 10px;
 }
 
 .fa-heart-o {

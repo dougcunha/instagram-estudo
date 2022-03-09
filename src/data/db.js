@@ -229,7 +229,10 @@ export async function subscribeToComments(postId, setComments) {
 }
 
 export async function subscribeToLike(postId, setLike) {
-  const q = query(collection(getFirestore(app), `posts/${postId}/likes`), where('user.id', '==', getAuth(app).currentUser.uid));
+  const q = query(
+    collection(getFirestore(app), `posts/${postId}/likes`),
+    where('user.id', '==', getAuth(app).currentUser.uid)
+  );
 
   return onSnapshot(q, (querySnapshot) => {
     const docs = querySnapshot.docs;
@@ -243,7 +246,7 @@ export async function subscribeToLike(postId, setLike) {
 }
 
 export async function subscribeToLikes(postId, setLikes) {
-    const q = query(collection(getFirestore(app), `posts/${postId}/likes`));
+  const q = query(collection(getFirestore(app), `posts/${postId}/likes`));
 
   return onSnapshot(q, (querySnapshot) => {
     const docs = querySnapshot.docs;
@@ -254,5 +257,18 @@ export async function subscribeToLikes(postId, setLikes) {
     });
 
     setLikes(likes);
+  });
+}
+
+export async function listLikes(postId) {
+  const q = query(collection(getFirestore(app), `posts/${postId}/likes`));
+  const snap = await getDocs(q);
+
+  return snap.docs.map(d => {
+    const like = d.data();
+    return new LikeModel(
+      d.id,
+      UserModel.fromUser(like.user),
+      postId, like.timestamp);
   });
 }

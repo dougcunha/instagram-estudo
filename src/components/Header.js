@@ -29,7 +29,7 @@ function LoggedIn(props) {
 
   return (
     <span className='logged'>
-      {profile && <Profile userProfile={userProfile} setProfile={setProfile} />}
+      <Profile userProfile={userProfile} show={profile ? true : false} setProfile={setProfile} />
       <span className='btn-new-post material-icons-outlined' onClick={e => openNewPost(e)}>add_box</span>
       <span className='btn-logout material-icons-outlined' onClick={e => logoff(e)}>logout</span>
       <img className='profile-photo-small right' onClick={e => showProfile(e)} src={userProfile?.photoURL || nophoto} alt=""></img>
