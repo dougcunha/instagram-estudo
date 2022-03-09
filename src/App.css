@@ -289,6 +289,10 @@ div.upload-box-input label {
   cursor: pointer;
 }
 
+div.upload-box.active {
+  border: 2px dashed #0095f6
+}
+
 .upload-box-icon {
   width: 100%;
   height: 40px;

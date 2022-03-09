@@ -1,30 +1,12 @@
 import { useState } from "react";
 import { addComment } from "../data/db";
+import { BtnEmoji } from "./BtnEmoji";
 import { usePostContext } from "./Post";
 
 export function BtnPublish({disabled, value}) {
   return (
-    <input type="submit" value={value ?? "Publicar"} disabled={disabled} />
+    <input type="submit" value={value ?? "Publicar"} disabled={disabled}/>
   );
-}
-
-export function BtnEmoji() {
-  const { setInfoMessage } = usePostContext();
-
-  function showEmojis(e) {
-    e.preventDefault();
-
-    setInfoMessage(`
-      Ainda estamos implementando os Emojis.
-      No windows você pode chamar o diálogo padrão de emojis usando a tecla Win + .
-    `);
-  }
-
-  return (
-    <button className='btn-emoji-list material-icons-outlined' onClick={e => showEmojis(e)}>
-      emoji_emotions
-    </button>
-  )
 }
 
 export function FormComment() {
@@ -62,7 +44,7 @@ export function FormComment() {
 
   return (
     <form className='form-add-comment' id={`form-add-comment-${post.id}`} onSubmit={e => newComment(post.id, e)}>
-      <BtnEmoji />
+      <BtnEmoji textareaId={`comment-${post.id}`} />
       <textarea
         id={`comment-${post.id}`}
         placeholder="Adicione um comentário..."
