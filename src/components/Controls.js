@@ -3,9 +3,9 @@ import { addComment } from "../data/db";
 import { BtnEmoji } from "./BtnEmoji";
 import { usePostContext } from "./Post";
 
-export function BtnPublish({disabled, value}) {
+export function BtnPublish({id, disabled, value}) {
   return (
-    <input type="submit" value={value ?? "Publicar"} disabled={disabled}/>
+    <input id={id} type="submit" value={value ?? "Publicar"} disabled={disabled}/>
   );
 }
 

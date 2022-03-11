@@ -177,9 +177,16 @@ export function sendFile(file, onProgress, onSuccess, onError, path='images', fi
   const fileRef = ref(storage, `${path}/${fileId}`);
   const task = uploadBytesResumable(fileRef, file);
 
+  function getPercent(snap) {
+    const percent = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+    console.log(percent);
+
+    return percent;
+  }
+
   task
     .on("stage_changed",
-      snap => onProgress?.(Math.round((snap.bytesTransferred / snap.totalBytes) * 100)),
+      snap => onProgress?.(getPercent(snap)),
       error => onError?.(error),
       () => {
         getDownloadURL(task.snapshot.ref)

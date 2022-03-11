@@ -1,20 +1,23 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { addPost } from '../data/db';
 import { BtnEmoji } from './BtnEmoji';
+import CircularProgress from './CircularProgress';
 import { BtnPublish } from './Controls';
+import { CropImage } from './CropImage';
 
 export function FormUpload(props) {
   const [progress, setProgress] = useState(0);
+  const [sending, setSending] = useState(false);
   const [file, setFile] = useState(null);
+  const formRef = useRef();
 
-  function sendPost(e) {
-    e.preventDefault();
-    const btn = e.target.querySelector('input[type=submit]');
-    btn.disabled = true;
+  function sendPost(blob) {
+    setSending(true);
+    setProgress(10);
     const description = document.getElementById('post-description').value;
 
     addPost(
-      file,
+      blob,
       description,
       setProgress,
       () => {
@@ -28,21 +31,24 @@ export function FormUpload(props) {
 
   function closeDlg(e) {
     e?.preventDefault();
+    setSending(false);
+    setProgress(0);
+    setFile(null);
     props.setNovoPost(false);
   }
 
   return  (
       (props.novoPost) && <div className="modal-upload">
-        <div className="form-upload">
-          {progress > 0 && <progress id="progress-upload" value={progress} max="100"/>}
+        <div className="form-upload" ref={formRef}>
+          {sending && <CircularProgress id="progress-upload" percentage={progress} colour={'#0095f6'}/>}
           <span className="close" onClick={e => closeDlg(e)}>X</span>
           <h2>Criar nova publicação</h2>
-          <form id="form-upload" onSubmit={e => sendPost(e)}>
-              <UploadBox {...props} setFile={setFile}></UploadBox>
+          <form id="form-upload">
+              {!sending && <UploadBox {...props} setFile={setFile} sendPost={sendPost} formRef={formRef}></UploadBox>}
               <div className='textarea-upload-description'>
                 <BtnEmoji textareaId='post-description' />
                 <textarea id="post-description" type="text" placeholder="Descrição"/>
-                <BtnPublish disabled={file && !progress ? false : true}/>
+                <BtnPublish id='btn-publish' disabled={file && !sending ? false : true}/>
               </div>
           </form>
         </div>
@@ -52,6 +58,7 @@ export function FormUpload(props) {
 
 function UploadBox(props) {
   const setFile = props.setFile;
+  const [src, setSrc] = useState(null);
 
   function onFileChanged(e)	{
     const file = e.target.files[0];
@@ -74,16 +81,10 @@ function UploadBox(props) {
     var reader = new FileReader();
 
     reader.onload = function (e) {
-      const img = document.getElementById('upload-box-preview-img');
-      img.src = e.target.result;
+      setSrc(e.target.result);
     }
 
     reader.readAsDataURL(file);
-  }
-
-  function selectFile(e) {
-    const file = document.getElementById('file');
-    file.click();
   }
 
   function onDragOver(event) {
@@ -103,10 +104,21 @@ function UploadBox(props) {
     showFile(file, event.target);
   }
 
+  function getFormRef() {
+    return props.formRef.current;
+  }
+
   return (
     <div className="upload-box" id="upload-box">
       <div className="upload-box-preview">
-        <img id="upload-box-preview-img" src="#" alt="" onClick={e => selectFile(e)} />
+        <CropImage
+          src={src}
+          setResult={props.sendPost}
+          resultType='blob'
+          btnResultId='btn-publish'
+          maxWidth={getFormRef()?.clientWidth ?? 700}
+          maxHeight={0}
+        />
       </div>
       <div className="upload-box-input" onDragOver={e => onDragOver(e)} onDragLeave={e => onDragLeave(e)} onDrop={e => onDrop(e)}>
         <svg className="upload-box-icon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43">

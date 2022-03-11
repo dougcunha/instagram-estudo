@@ -727,8 +727,8 @@ button.btn-link {
 }
 
 .profile-photo > img {
-  width: 220px;
-  height: 220px;
+  width: 300px;
+  height: 300px;
   border-radius: 50%;
   cursor: pointer;
 }
@@ -751,6 +751,22 @@ button.btn-link {
 
 .profile button {
   margin-top: 10px;
+}
+
+.profile .btns-profile {
+  display: flex;
+  justify-content: flex-end;
+  order: 1;
+}
+.profile .btn-close {
+  background-color: white;
+  color: #828282;
+  order: 2;
+}
+
+.profile .btn-save {
+  background-color: white;
+  color: #0095f6;
 }
 
 .fa {

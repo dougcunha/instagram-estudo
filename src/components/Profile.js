@@ -1,17 +1,18 @@
 import { getAuth } from 'firebase/auth';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { sendFile, updProfile } from '../data/db';
 import { app } from '../firebase';
 import nophoto from '../img/nophoto.png';
 import { toFormattedDate } from '../models';
-import Croppie from 'croppie'
-import 'croppie/croppie.css';
+import CircularProgress from './CircularProgress';
+import { CropImage } from './CropImage';
 
 export function Profile(props) {
+  const [url, setUrl] = useState(null);
+  const [sending, setSending] = useState(false);
+  const [changed, setChanged] = useState(false);
   const profile = props.userProfile;
   const show = props.show;
-  const [resizer, setResizer] = useState(null);
-  const [file, setFile] = useState(null);
 
   if (!profile || !show)
     return null;
@@ -20,10 +21,11 @@ export function Profile(props) {
   const createdAt = toFormattedDate(profile.createdAt);
   const lastLoginAt = toFormattedDate(profile.lastLoginAt);
 
-
   function close(e) {
     e?.preventDefault();
-
+    setUrl(null);
+    setSending(false);
+    setChanged(false);
     props.setProfile(null);
   }
 
@@ -36,7 +38,6 @@ export function Profile(props) {
 
   function showFile(e)	{
     const file = e.target.files[0];
-    setFile(file);
     readURL(file);
 	}
 
@@ -47,112 +48,125 @@ export function Profile(props) {
     var reader = new FileReader();
 
     reader.onload = function (e) {
-      configureImg(e.target.result);
+      setUrl(e.target.result);
     }
 
     reader.readAsDataURL(file);
   }
 
-  async function saveChanges(e) {
-    e.preventDefault();
-
-    if (resizer)
-      resizer.result('blob').then(blob =>  {
-        sendFile(
-          blob,
-          null,
-          (url, _) => {
-            setFile(null);
-            profile.photoURL = url;
-            updProfile(getAuth(app).currentUser, profile)
-              .then(_ => close())
-              .catch(error => {
-                alert(error.message);
-                console.error(error);
-              });
-          },
-          error => {
-            alert(error.message);
-            console.error(error);
-          },
-          'profiles',
-          profile.uid
-        )
-      });
-    else
-    try {
-      await updProfile(getAuth(app).currentUser, profile);
-      close();
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
+  async function saveProfile(blob) {
+    setSending(true);
+    if (blob) {
+      sendFile(
+        blob,
+        null,
+        (photoURL, _) => {
+          profile.photoURL = photoURL;
+          updProfile(getAuth(app).currentUser, profile)
+            .then(_ => close())
+            .catch(error => {
+              alert(error.message);
+              console.error(error);
+            });
+        },
+        error => {
+          alert(error.message);
+          console.error(error);
+        },
+        'profiles',
+        profile.uid
+      )
     }
+    else
+      try {
+        await updProfile(getAuth(app).currentUser, profile);
+        close();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
   }
-
-  function configureImg(url) {
-    const el = document.getElementById('profile-img');
-    el.src = url;
-    const resize = new Croppie(el, {
-        enableExif: true,
-        viewport: { width: 300, height: 300, type: 'circle' },
-        boundary: { width: 300, height: 300 },
-        enableResize: true,
-        enforceBoundary: false,
-        minZoom: 0
-    });
-    resize.bind({
-        url: url,
-    });
-    setResizer(resize);
-  }
+  const btnSaveId = 'btn-save';
 
   return (
     show && <div className="modal">
       <div className="profile dialog">
+        {sending && <CircularProgress indeterminate={true} colour={'red'} />}
         <input type="file" accept="image/*" onChange={e => showFile(e)} className="upload-box-file" id="file" />
-        <div className='profile-photo' id='profile-photo'>
+        {!sending && <div className='profile-photo' id='profile-photo'>
           {canEdit && <span className='profile-edit-photo' onClick={e => editPhoto(e)}>Alterar</span>}
-          <img id='profile-img' src={profile.photoURL || nophoto} alt=""/>
-        </div>
+          {!url && <img id='profile-img' src={profile.photoURL || nophoto} alt=""/>}
+          <CropImage
+            src={url}
+            setResult={saveProfile}
+            resultType='blob'
+            type='circle'
+            btnResultId={btnSaveId}
+          />
+        </div>}
         <div className='profile-info'>
-          <Item setValue={v => profile.email = v} id='txt-email' profile={profile} value={profile.email} label='Email:' type='email' readOnly={true}/>
-          <Item setValue={v => profile.displayName = v} id='txt-username' profile={profile} value={profile.displayName} label='User:'/>
-          <Item setValue={v => profile.phoneNumber = v} id='txt-phone' profile={profile} value={profile.phoneNumber} label='Tel:' type='tel'/>
+          <Item
+            id='txt-email'
+            profile={profile}
+            changed={setChanged}
+            value={profile.email}
+            label='Email:'
+            type='email'
+            readOnly={true}
+          />
+          <Item
+            id='txt-username'
+            profile={profile}
+            changed={setChanged}
+            value={profile.displayName}
+            setValue={v => profile.displayName = v}
+            label='User:'
+            readOnly={!canEdit}
+          />
+          <Item
+            id='txt-phone'
+            profile={profile}
+            changed={setChanged}
+            value={profile.phoneNumber}
+            setValue={v => profile.phoneNumber = v}
+            label='Tel:'
+            type='tel'
+            readOnly={!canEdit}
+          />
           <b className='txt-profile-sep'></b>
           <p>Desde {createdAt}</p>
           <p>Ultimo login: {lastLoginAt}</p>
         </div>
-        <button className="btn" onClick={e => close(e)}>Fechar</button>
-        {(file || canEdit) && <button className="btn" onClick={e => saveChanges(e)}>Salvar</button>}
+        <div className='btns-profile'>
+          <button className="btn btn-close" onClick={e => close(e)}>Fechar</button>
+          {(url || changed) &&
+            <button className="btn btn-save" onClick={_ => saveProfile(null)} id={btnSaveId}>Salvar</button>}
+        </div>
       </div>
     </div>
   );
 }
 
-function Item(props) {
-  const setValue = props.setValue;
-  const profile = props.profile;
-  const id = props.id;
-  const value = props.value;
-  const type = props.type ?? 'text';
-  const label = props.label;
-  const uid = getAuth(app).currentUser.uid;
-  const readOnly = props.readOnly || uid !== profile.uid;
-  const [canEdit, setCanEdit] = useState(props.canEdit && !props.readOnly);
-
-  function changed(e) {
-    setValue(e.target.value);
-  }
+function Item({id, type='text', changed, value, setValue, label, readOnly}) {
+  const [canEdit, setCanEdit] = useState(false);
+  const [vl, setVl] = useState(value);
+  const inputRef = useRef();
 
   function edit(e) {
     setCanEdit(true);
+    inputRef.current.focus();
+  }
+
+  function onChange(e) {
+    setVl(e.target.value);
+    setValue(e.target.value);
+    changed(true);
   }
 
   return (
     <div className='profile-item'>
       <label htmlFor={id}>{label}</label>
-      {!canEdit && <span id={`txt-${id}`}>{value}</span>}
-      {canEdit && <input type={type} id={id} name={id} placeholder={value} onChange={e => changed(e)}/>}
+      <input type={type} id={id} name={id} ref={inputRef} value={vl} onChange={onChange} readOnly={!canEdit} />
       {!readOnly && !canEdit && <i className='btn-edit material-icons-outlined' onClick={e => edit(e)}>edit</i>}
     </div>
   );
